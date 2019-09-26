@@ -1,0 +1,56 @@
+{
+  "name": "stateq-js",
+  "version": "1.0.0",
+  "description": "lightweight pub/sub implementation",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "npm test -- --watch --coverage"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kevtiq/pubby.git"
+  },
+  "keywords": [
+    "pubsub",
+    "publish subscribe",
+    "pub/sub",
+    "publish-subscribe"
+  ],
+  "author": "Kevin Pennekamp <github@kevtiq.co>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kevtiq/pubby/issues"
+  },
+  "homepage": "https://github.com/kevtiq/pubby#readme",
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
+      "prettier --single-quote --write",
+      "git add"
+    ]
+  },
+  "browserslist": [
+    "chrome 58",
+    "safari 10"
+  ],
+  "devDependencies": {
+    "@babel/core": "^7.6.0",
+    "@babel/preset-env": "^7.6.0",
+    "babel-eslint": "^10.0.3",
+    "babel-jest": "^24.9.0",
+    "eslint": "^6.4.0",
+    "eslint-config-prettier": "^6.3.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-prettier": "^3.1.0",
+    "husky": "^3.0.5",
+    "jest": "^24.9.0",
+    "jest-watch-typeahead": "^0.4.0",
+    "lint-staged": "^9.2.5",
+    "prettier": "^1.18.2"
+  }
+}
