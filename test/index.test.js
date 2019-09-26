@@ -31,14 +31,18 @@ describe('eventManager', () => {
     expect(testFn.mock.calls.length).toBe(4);
   });
 
-  it('Another subscribe, called & remove', () => {
-    const remove = manager.subscribe('test-event', testFn);
-    expect(remove).toBeInstanceOf(Object);
+  it('Another subscribe & unsubscribe', () => {
+    const subscription = manager.subscribe('test-event', testFn);
     manager.publish('test-event', 'test');
     expect(testFn.mock.calls.length).toBe(7);
-    remove();
+    manager.unsubscribe(subscription);
+    manager.unsubscribe({ index: 4, message: 'test-event' });
+    manager.unsubscribe({ index: 4, message: 'tesevent' });
     manager.publish('test-event', 'test');
     expect(testFn.mock.calls.length).toBe(9);
+  });
+
+  it('remove topic', () => {
     manager.remove('test-event');
     manager.publish('test-event', 'test');
     expect(testFn.mock.calls.length).toBe(9);

@@ -1,4 +1,4 @@
-export default function pubsub() {
+export default function pubsub(queue = false) {
   const _list = new Map();
 
   // Subscribe a callback to a message, that also can be removed
@@ -6,8 +6,7 @@ export default function pubsub() {
     if (!callback) return;
     _list.has(message) || _list.set(message, []);
     const index = _list.get(message).push(callback) - 1;
-
-    return () => delete _list.get(message)[index];
+    return { index, message };
   }
 
   // publish a message onto the queue with optional additional parameters
@@ -21,5 +20,11 @@ export default function pubsub() {
     _list.has(message) && _list.delete(message);
   }
 
-  return { subscribe, publish, remove };
+  // removes a subscription retrieved from the subscribe()
+  function unsubscribe({ message, index }) {
+    if (_list.has(message) && _list.get(message).length >= index - 1)
+      delete _list.get(message)[index];
+  }
+
+  return { subscribe, publish, unsubscribe, remove };
 }
