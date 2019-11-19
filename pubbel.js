@@ -1,4 +1,4 @@
-export function createPubSub(logger) {
+export default function createPubSub(logger) {
   const _list = new Map();
 
   // Subscribe a callback to a message, that also can be removed
@@ -11,9 +11,9 @@ export function createPubSub(logger) {
 
   // publish a message onto the pubsub with optional additional parameters
   function publish(message, ...args) {
-    if (logger) logger(message);
     if (!_list.has(message)) return false;
-    _list.get(message).forEach(async (cb) => await cb(...args));
+    if (logger) logger(message);
+    _list.get(message).forEach((cb) => cb(...args));
   }
 
   // remove an entire message from the list

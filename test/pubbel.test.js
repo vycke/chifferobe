@@ -1,9 +1,10 @@
 import pubsub from '../pubbel';
 
 const testFn = jest.fn((x) => x);
+const logger = jest.fn((x) => x);
 const asyncTestFn = jest.fn().mockResolvedValue('default');
 
-describe('eventManager', () => {
+describe('default pubbel', () => {
   let manager;
   beforeEach(() => {
     manager = pubsub();
@@ -52,5 +53,16 @@ describe('eventManager', () => {
     manager.subscribe('test-event', asyncTestFn);
     manager.publish('test-event', 'test');
     expect(asyncTestFn.mock.calls.length).toBe(1);
+  });
+});
+
+describe('pubbel with logger', () => {
+  it('check if logger is called', () => {
+    const manager = pubsub(logger);
+    manager.publish('test-event');
+    expect(logger.mock.calls.length).toBe(0);
+    manager.subscribe('test-event', testFn);
+    manager.publish('test-event');
+    expect(logger.mock.calls.length).toBe(1);
   });
 });
