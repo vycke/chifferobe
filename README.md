@@ -9,8 +9,8 @@
 Pubbel is a very light-weight JavaScript [publish-subscribe](https://en.wikipedia.org/wiki/Publish%E2%80%93subscribe_pattern) implemementation for asynchronous communication between for instance UI components. It is a good and stable way to perform actions on the background (e.g. refreshing an authorization token) or make an application scalable. A queue is used to enforce sequential execution.
 
 ```js
-import createPubbel from 'pubbel';
-const pubbel = createPubbel();
+import pubbel from 'pubbel';
+const myPubbel = pubbel();
 ```
 
 Optionally, you can provide a logger function as a parameter in the `createPubbel(logger: Function)` function. This will post the message on every `publish` to the logger.
@@ -21,8 +21,8 @@ You subscribe to a topic by using the `subscribe(topic, callback)` function. Whe
 
 ```js
 function myCallback(...args) { ... }
-const mySubscription = pubbel.subscribe('message-1', myCallback);
-pubbel.unsubscribe(mySubscription);
+const mySubscription = myPubbel.subscribe('message-1', myCallback);
+myPubbel.unsubscribe(mySubscription);
 ```
 
 ## Publishing
@@ -30,8 +30,8 @@ pubbel.unsubscribe(mySubscription);
 Publishing a message on your Pub/Sub can easily be done by using the `publish(message, ...args)` function;
 
 ```js
-pubbel.publish('message-1');
-pubbel.publish('message-2', data);
+myPubbel.publish('message-1');
+myPubbel.publish('message-2', data);
 ```
 
 ## Queue and Stack
