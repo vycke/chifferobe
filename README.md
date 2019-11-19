@@ -1,6 +1,6 @@
 # Pubby JS
 
-Pubby JS is a very light-weight JavaScript [publish-subscribe](https://en.wikipedia.org/wiki/Publish%E2%80%93subscribe_pattern) implemementation for asynchronous communication between for instance UI components. It is a good and stable way to perform actions on the background (e.g. refreshing an authorization token) or make an application scalable.
+Pubby JS is a very light-weight JavaScript [publish-subscribe](https://en.wikipedia.org/wiki/Publish%E2%80%93subscribe_pattern) implemementation for asynchronous communication between for instance UI components. It is a good and stable way to perform actions on the background (e.g. refreshing an authorization token) or make an application scalable. A queue is used to enforce sequential execution.
 
 ```js
 import pubsub from 'pubby-js';
@@ -25,3 +25,5 @@ Publishing a message on your Pub/Sub can easily be done by using the `publish(me
 myPubsub.publish('message-1');
 myPubsub.publish('message-2', data);
 ```
+
+## Queue and Stack

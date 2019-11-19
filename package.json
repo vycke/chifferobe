@@ -1,28 +1,31 @@
 {
-  "name": "stateq-js",
+  "name": "pubbel",
   "version": "1.0.0",
-  "description": "lightweight pub/sub implementation",
-  "main": "index.js",
+  "description": "lightweight dependency free JavaScript pub/sub",
+  "main": "dist/pubbel.js",
+  "module": "pubbel.js",
+  "type": "module",
   "scripts": {
     "test": "jest",
-    "test:watch": "npm test -- --watch --coverage"
+    "test:watch": "npm test -- --watch --coverage",
+    "build": "babel pubbel.js -d dist && npm run minify",
+    "prepublish": "npm  run build",
+    "minify": "terser dist/pubbel.js -o dist/pubbel.min.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kevtiq/pubby.git"
+    "url": "git+https://github.com/kevtiq/pubbel.git"
   },
   "keywords": [
-    "pubsub",
-    "publish subscribe",
-    "pub/sub",
-    "publish-subscribe"
+    "pub sub",
+    "message bus"
   ],
   "author": "Kevin Pennekamp <github@kevtiq.co>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/kevtiq/pubby/issues"
+    "url": "https://github.com/kevtiq/pubbel/issues"
   },
-  "homepage": "https://github.com/kevtiq/pubby#readme",
+  "homepage": "https://github.com/kevtiq/pubbel#readme",
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged"
@@ -34,12 +37,9 @@
       "git add"
     ]
   },
-  "browserslist": [
-    "chrome 58",
-    "safari 10"
-  ],
   "devDependencies": {
-    "@babel/core": "^7.6.0",
+    "@babel/cli": "^7.7.0",
+    "@babel/core": "^7.7.2",
     "@babel/preset-env": "^7.6.0",
     "babel-eslint": "^10.0.3",
     "babel-jest": "^24.9.0",
@@ -51,6 +51,7 @@
     "jest": "^24.9.0",
     "jest-watch-typeahead": "^0.4.0",
     "lint-staged": "^9.2.5",
-    "prettier": "^1.18.2"
+    "prettier": "^1.18.2",
+    "terser": "^4.4.0"
   }
 }

@@ -1,4 +1,4 @@
-import pubsub from '../src';
+import pubsub from '../pubbel';
 
 const testFn = jest.fn((x) => x);
 const asyncTestFn = jest.fn().mockResolvedValue('default');

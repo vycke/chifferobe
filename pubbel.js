@@ -1,4 +1,4 @@
-export default function pubsub(queue = false) {
+export function createPubSub(logger) {
   const _list = new Map();
 
   // Subscribe a callback to a message, that also can be removed
@@ -9,8 +9,9 @@ export default function pubsub(queue = false) {
     return { index, message };
   }
 
-  // publish a message onto the queue with optional additional parameters
+  // publish a message onto the pubsub with optional additional parameters
   function publish(message, ...args) {
+    if (logger) logger(message);
     if (!_list.has(message)) return false;
     _list.get(message).forEach(async (cb) => await cb(...args));
   }
