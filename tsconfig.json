@@ -4,7 +4,7 @@
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
     "composite": true,
-    "target": "es6",
+    "target": "es5",
     "lib": ["es6"],
     "declaration": true,
     "declarationMap": true,
