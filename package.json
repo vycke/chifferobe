@@ -1,16 +1,16 @@
 {
   "name": "pubbel",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "lightweight dependency free JavaScript pub/sub",
-  "main": "dist/pubbel.js",
-  "module": "pubbel.js",
-  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist.index.d.ts",
   "scripts": {
     "test": "jest",
-    "test:watch": "npm test -- --watch --coverage",
-    "build": "babel pubbel.js -d dist && npm run minify",
-    "prepublish": "npm  run build",
-    "minify": "terser dist/pubbel.js -o dist/pubbel.min.js"
+    "clean": "rimraf ./dist && rimraf ./tsconfig.tsbuildinfo",
+    "test:watch": "npm test -- --watchAll --coverage",
+    "build": "npm run clean && tsc && tsc -b ./tsconfig.json && npm run bundlesize",
+    "prepublish": "npm run build",
+    "bundlesize": "bundlesize --config bundlesize.config.json"
   },
   "repository": {
     "type": "git",
@@ -38,20 +38,19 @@
     ]
   },
   "devDependencies": {
-    "@babel/cli": "^7.7.0",
-    "@babel/core": "^7.7.2",
-    "@babel/preset-env": "^7.6.0",
-    "babel-eslint": "^10.0.3",
-    "babel-jest": "^24.9.0",
-    "eslint": "^6.4.0",
-    "eslint-config-prettier": "^6.3.0",
-    "eslint-plugin-import": "^2.18.2",
-    "eslint-plugin-prettier": "^3.1.0",
-    "husky": "^3.0.5",
+    "@types/jest": "^24.0.23",
+    "@typescript-eslint/eslint-plugin": "^2.8.0",
+    "@typescript-eslint/parser": "^2.8.0",
+    "bundlesize": "^0.18.0",
+    "eslint": "^6.7.1",
+    "eslint-config-prettier": "^6.7.0",
+    "eslint-plugin-prettier": "^3.1.1",
+    "husky": "^3.1.0",
     "jest": "^24.9.0",
-    "jest-watch-typeahead": "^0.4.0",
-    "lint-staged": "^9.2.5",
-    "prettier": "^1.18.2",
-    "terser": "^4.4.0"
+    "lint-staged": "^9.4.3",
+    "prettier": "^1.19.1",
+    "rimraf": "^3.0.0",
+    "ts-jest": "^24.2.0",
+    "typescript": "^3.7.2"
   }
 }

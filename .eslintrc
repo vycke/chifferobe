@@ -1,16 +1,21 @@
 {
-  "extends": "prettier",
-  "parser": "babel-eslint",
-  "plugins": ["prettier", "react-hooks"],
+  "parser": "@typescript-eslint/parser",
+  "extends": [
+    "plugin:@typescript-eslint/recommended",
+    "plugin:prettier/recommended"
+  ],
+  "plugins": ["prettier"],
   "env": {
     "browser": true,
     "node": true,
     "jest": true
   },
+  "parserOptions": {
+    "ecmaVersion": 2018,
+    "sourceType": "module"
+  },
   "rules": {
-    "prettier/prettier": "error",
-    "react-hooks/rules-of-hooks": "error",
-    "react-hooks/exhaustive-deps": "warn"
+    "prettier/prettier": "error"
   },
   "settings": {
     "import/resolver": {

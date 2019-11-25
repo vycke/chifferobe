@@ -1,0 +1,21 @@
+{
+  "include": ["src/"],
+  "exclude": ["**/__tests__/"],
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "composite": true,
+    "target": "es6",
+    "lib": ["es6"],
+    "declaration": true,
+    "declarationMap": true,
+    "moduleResolution": "node",
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "strictNullChecks": true,
+    "downlevelIteration": true,
+    "experimentalDecorators": true,
+    "strictPropertyInitialization": true,
+    "outDir": "dist",
+    "rootDir": "src"
+  }
+}
