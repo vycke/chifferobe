@@ -1,4 +1,4 @@
-import pubsub from '../index';
+import pubsub from '../pubsub';
 
 const testFn = jest.fn((x) => x);
 const asyncTestFn = jest.fn().mockResolvedValue('default');
@@ -35,9 +35,9 @@ describe('default pubbel', () => {
     const subscription = manager.subscribe('test-event', testFn);
     manager.publish('test-event', 'test');
     expect(testFn.mock.calls.length).toBe(7);
-    manager.unsubscribe(subscription);
-    manager.unsubscribe({ index: 4, message: 'test-event' });
-    manager.unsubscribe({ index: 4, message: 'tesevent' });
+    manager.unsubscribe('test-event', subscription);
+    manager.unsubscribe('test-event', { index: 4 });
+    manager.unsubscribe('tesevent', { index: 4 });
     manager.publish('test-event', 'test');
     expect(testFn.mock.calls.length).toBe(9);
   });
@@ -52,5 +52,28 @@ describe('default pubbel', () => {
     manager.subscribe('test-event', asyncTestFn);
     manager.publish('test-event', 'test');
     expect(asyncTestFn.mock.calls.length).toBe(1);
+  });
+
+  it('localstorage', () => {
+    window.dispatchEvent(
+      new StorageEvent('storage', {
+        key: 'pubbel_test-event',
+        newValue: '{ "test": "test" }'
+      })
+    );
+    expect(testFn.mock.calls.length).toBe(13);
+
+    window.dispatchEvent(
+      new StorageEvent('storage', {
+        key: 'pubbel_test-event'
+      })
+    );
+    expect(testFn.mock.calls.length).toBe(15);
+    window.dispatchEvent(
+      new StorageEvent('storage', {
+        key: 'pubbel_test-event-2'
+      })
+    );
+    expect(testFn.mock.calls.length).toBe(15);
   });
 });

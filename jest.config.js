@@ -3,5 +3,6 @@ module.exports = {
   testPathIgnorePatterns: ['/node_modules/'],
   transform: {
     '^.+\\.(t|j)sx?$': 'ts-jest'
-  }
+  },
+  setupFiles: ['jest-localstorage-mock']
 };
