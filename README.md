@@ -1,4 +1,4 @@
-# Pubble
+# Pubbel
 
 ![](https://github.com/kevtiq/pubbel/workflows/test/badge.svg)
 [![Node version](https://img.shields.io/npm/v/pubbel.svg?style=flat)](https://www.npmjs.com/package/pubbel)
