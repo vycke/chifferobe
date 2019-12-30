@@ -11,7 +11,6 @@ export type PubSub = {
   unsubscribe(message: string, subscription: Subscription): void;
   publish(message: string, ...args: Primitive[]): void;
   remove(message: string): void;
-  has(message: string): boolean;
 };
 
 export type Broker = {

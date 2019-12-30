@@ -29,22 +29,10 @@ describe('default pubbel', () => {
     expect(testFn.mock.calls.length).toBe(2);
   });
 
-  it('has', () => {
-    expect(pubsub.has('test-event')).toBe(true);
-    expect(pubsub.has('no-event')).toBe(false);
-  });
-
   it('faulty subscribe', () => {
     pubsub.subscribe('test-event');
     pubsub.publish('test-event');
     expect(testFn.mock.calls.length).toBe(4);
-  });
-
-  it('unsubscribe', () => {
-    const subscription = pubsub.subscribe('unsubscribe', testFn);
-    expect(pubsub.has('unsubscribe')).toBe(true);
-    pubsub.unsubscribe('unsubscribe', subscription);
-    expect(pubsub.has('unsubscribe')).toBe(false);
   });
 
   it('Another subscribe & unsubscribe', () => {

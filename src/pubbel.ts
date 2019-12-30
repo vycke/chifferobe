@@ -61,9 +61,6 @@ export default function pubbel(config?: Config): PubSub {
     // remove an entire message from the list
     remove(message): void {
       _list.has(message) && _list.delete(message);
-    },
-    has(message): boolean {
-      return _list.has(message);
     }
   };
 }
