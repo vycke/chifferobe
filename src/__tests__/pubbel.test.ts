@@ -64,15 +64,28 @@ describe('sync between tabs', () => {
   pubsub.subscribe('sync-event', testFn);
 
   it('simple sync', () => {
+    const message1 = JSON.stringify({ message: 'sync-event' });
+    const message2 = JSON.stringify({ message: 'sync-event-2' });
+
     window.dispatchEvent(
       new StorageEvent('storage', {
-        key: 'pubbel-sync-event'
+        key: 'pubbel-event',
+        newValue: message1
       })
     );
     expect(testFn.mock.calls.length).toBe(12);
+
     window.dispatchEvent(
       new StorageEvent('storage', {
-        key: 'pubbel-sync-event-2'
+        key: 'pubbel-event',
+        newValue: message2
+      })
+    );
+    expect(testFn.mock.calls.length).toBe(12);
+
+    window.dispatchEvent(
+      new StorageEvent('storage', {
+        key: 'pubbel-event'
       })
     );
     expect(testFn.mock.calls.length).toBe(12);
@@ -84,8 +97,8 @@ describe('sync between tabs', () => {
   it('sync with data', () => {
     window.dispatchEvent(
       new StorageEvent('storage', {
-        key: 'pubbel-sync-event',
-        newValue: JSON.stringify({ key: 'value' })
+        key: 'pubbel-event',
+        newValue: JSON.stringify({ message: 'sync-event', args: ['value'] })
       })
     );
     expect(testFn.mock.calls.length).toBe(13);

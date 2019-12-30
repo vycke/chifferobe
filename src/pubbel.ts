@@ -3,16 +3,8 @@ import { uuid } from './utils';
 
 // Helper for synchronizing through localStorage
 function synchronize(message: string, ...args: Primitive[]): void {
-  localStorage.setItem(`pubbel-${message}`, JSON.stringify(args));
-  localStorage.removeItem(`pubbel-${message}`);
-}
-
-function parse(input: string): Primitive {
-  try {
-    return JSON.parse(input);
-  } catch (e) {
-    return input;
-  }
+  localStorage.setItem('pubbel-event', JSON.stringify({ message, args }));
+  localStorage.removeItem('pubbel-event');
 }
 
 // The actual pubsub
@@ -30,11 +22,11 @@ export default function pubbel(config?: Config): PubSub {
 
   if (config?.sync) {
     window.addEventListener('storage', function({ key, newValue }) {
-      if (!key) return;
-      const message = key.replace('pubbel-', '');
-      if (!_list.has(message)) return;
+      if (key !== 'pubbel-event' || !newValue) return;
+      const data = JSON.parse(newValue);
+      if (!_list.has(data.message)) return;
 
-      publish(message, false, parse(newValue || ''));
+      publish(data.message, false, ...(data.args || []));
     });
   }
 
