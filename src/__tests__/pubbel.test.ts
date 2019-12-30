@@ -15,6 +15,10 @@ describe('default pubbel', () => {
     pubsub.remove('test-event');
   });
 
+  it('ID', () => {
+    expect(pubsub.id.length).toBe(5);
+  });
+
   it('not Called', () => {
     pubsub.publish('not-event');
     expect(testFn.mock.calls.length).toBe(0);
@@ -25,10 +29,22 @@ describe('default pubbel', () => {
     expect(testFn.mock.calls.length).toBe(2);
   });
 
+  it('has', () => {
+    expect(pubsub.has('test-event')).toBe(true);
+    expect(pubsub.has('no-event')).toBe(false);
+  });
+
   it('faulty subscribe', () => {
     pubsub.subscribe('test-event');
     pubsub.publish('test-event');
     expect(testFn.mock.calls.length).toBe(4);
+  });
+
+  it('unsubscribe', () => {
+    const subscription = pubsub.subscribe('unsubscribe', testFn);
+    expect(pubsub.has('unsubscribe')).toBe(true);
+    pubsub.unsubscribe('unsubscribe', subscription);
+    expect(pubsub.has('unsubscribe')).toBe(false);
   });
 
   it('Another subscribe & unsubscribe', () => {
@@ -55,30 +71,39 @@ describe('default pubbel', () => {
   });
 });
 
-it('localstorage', () => {
+describe('sync between tabs', () => {
   const pubsub = pubbel({ sync: true });
-  pubsub.subscribe('test-event', testFn);
-  pubsub.subscribe('test-event', testFn);
-  window.dispatchEvent(
-    new StorageEvent('storage', {
-      key: 'pubbel_test-event',
-      newValue: '{ "test": "test" }'
-    })
-  );
-  expect(testFn.mock.calls.length).toBe(13);
+  pubsub.subscribe('sync-event', testFn);
 
-  window.dispatchEvent(
-    new StorageEvent('storage', {
-      key: 'pubbel_test-event'
-    })
-  );
-  expect(testFn.mock.calls.length).toBe(15);
-  window.dispatchEvent(
-    new StorageEvent('storage', {
-      key: 'pubbel_test-event-2'
-    })
-  );
-  expect(testFn.mock.calls.length).toBe(15);
+  it('simple sync', () => {
+    window.dispatchEvent(
+      new StorageEvent('storage', {
+        key: 'pubbel-sync-event'
+      })
+    );
+    expect(testFn.mock.calls.length).toBe(12);
+    window.dispatchEvent(
+      new StorageEvent('storage', {
+        key: 'pubbel-sync-event-2'
+      })
+    );
+    expect(testFn.mock.calls.length).toBe(12);
 
-  pubsub.remove('test-event');
+    window.dispatchEvent(new StorageEvent('storage', {}));
+    expect(testFn.mock.calls.length).toBe(12);
+  });
+
+  it('sync with data', () => {
+    window.dispatchEvent(
+      new StorageEvent('storage', {
+        key: 'pubbel-sync-event',
+        newValue: JSON.stringify({ key: 'value' })
+      })
+    );
+    expect(testFn.mock.calls.length).toBe(13);
+  });
+
+  it('send over to other browsers', () => {
+    pubsub.publish('sync-event');
+  });
 });

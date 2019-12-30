@@ -1,22 +1,22 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
-# dependencies
-/node_modules
-/.pnp
-.pnp.js
-
-# testing
-/coverage
-
-# production
-/dist
-
-# VS Code
-/.vscode
-
-# misc
+.*.swp
+._*
 .DS_Store
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-*.tsbuildinfo
+.git
+.hg
+.npmrc
+.lock-wscript
+.svn
+.wafpickle-*
+config.gypi
+CVS
+npm-debug.log
+
+
+.github/
+.vscode/
+src/
+.eslintrc
+.prettierrc
+jest.config.js
+.gitignore
+bundlesize.config.json

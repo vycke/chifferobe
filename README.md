@@ -38,23 +38,18 @@ myPubbel.publish('message-2', data);
 
 ## Multiple pubbel instances
 
-You can have multiple instances of pubbel running in your application. If you want to invoke something on multiple instances, there are two options you could use:
-
-- Use `localStorage.setItem()` with keys in the format of `pubbel_{message}`;
-- Have a parent pubbel where you can publish one message, which forwards the messages to the children pubbels, like in the code example below.
+You can have multiple instances of pubbel running in your application. The `broker` helper enables you to register multiple pubbel instances and publish a message to all of them.
 
 ```js
-const child = pubbel();
-const parent = pubbel();
+import { pubbel, broker } from 'pubbel';
 
-function parentChild(message) {
-  function invoke(...args) {
-    child.publish(message, ...args);
-  }
-  parent.subscribe(messsage, invoke);
-}
+const br = broker();
+const pubsub1 = pubbel();
+...
 
-parentChild('test');
+br.register(pubsub1, pubsub2, ...);
+br.publish('message-1', data);
+br.remove(pubsub1);
 ```
 
 ## Observable - subscribe to value changes
