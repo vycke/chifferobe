@@ -12,15 +12,17 @@ export default function pubbel(): PubSub {
   const _id: string = uuid();
   const _list: List = new Map<string, Subscription[]>();
   const get = (message: string): Subscription[] => _list.get(message) || [];
-  const set = (msg: string, subs: Subscription[]): void => {
-    if (subs.length > 0) _list.set(msg, subs);
-    else _list.delete(msg);
-  };
 
   // Publish the message and optionally sync it
   function publish(message: string, sync: boolean, ...args: Primitive[]): void {
     _list.get(message)?.forEach((sub): void => sub.callback?.(...args));
     if (sync) synchronize(message, ...args);
+  }
+
+  // Remove a subscription
+  function remove(msg: string, id: string): void {
+    const rem = get(msg).filter((s) => s.id !== id);
+    _list.set(msg, rem);
   }
 
   window.addEventListener('storage', function({ key, newValue }) {
@@ -46,11 +48,10 @@ export default function pubbel(): PubSub {
         id,
         callback,
         remove(): void {
-          const rem = get(message).filter((s) => s.id !== id);
-          set(message, rem);
+          remove(message, id);
         }
       };
-      set(message, get(message).concat(sub));
+      _list.set(message, get(message).concat(sub));
       return sub;
     },
     // remove an entire message from the list
