@@ -23,7 +23,7 @@ describe('observable', () => {
     const sub = observable.subscribe(testFn);
     observable.value = 'new value';
     expect(testFn).toBeCalledTimes(2);
-    observable.unsubscribe(sub);
+    sub.remove();
     observable.value = 'new value';
     expect(testFn).toBeCalledTimes(2);
   });
