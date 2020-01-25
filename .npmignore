@@ -20,3 +20,4 @@ src/
 jest.config.js
 .gitignore
 bundlesize.config.json
+tsconfig.*

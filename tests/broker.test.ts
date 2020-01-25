@@ -1,5 +1,5 @@
-import pubbel from '../pubbel';
-import broker from '../broker';
+import pubbel from '../src/pubbel';
+import broker from '../src/broker';
 
 const testFn = jest.fn((x) => x);
 

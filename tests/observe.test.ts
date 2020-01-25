@@ -1,4 +1,4 @@
-import observe from '../observable';
+import observe from '../src/observable';
 
 const testFn = jest.fn((x) => x);
 
