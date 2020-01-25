@@ -44,12 +44,11 @@ export default function pubbel(): PubSub {
     // Subscribe a callback to a message, that also can be removed
     subscribe(message, callback): Subscription {
       const id = uuid();
+
       const sub: Subscription = {
         id,
         callback,
-        remove(): void {
-          remove(message, id);
-        }
+        remove: () => remove(message, id)
       };
       _list.set(message, get(message).concat(sub));
       return sub;
