@@ -39,16 +39,15 @@ describe('default pubbel', () => {
     const subscription = pubsub.subscribe('test-event', testFn);
     pubsub.publish('test-event', 'test');
     expect(testFn.mock.calls.length).toBe(7);
-    pubsub.unsubscribe('test-event', subscription);
-    pubsub.unsubscribe('test-event', { index: 4 });
-    pubsub.unsubscribe('tesevent', { index: 4 });
+    subscription.remove();
     pubsub.publish('test-event', 'test');
     expect(testFn.mock.calls.length).toBe(9);
   });
 
   it('remove topic', () => {
-    pubsub.remove('test-event');
-    pubsub.publish('test-event', 'test');
+    const sub2 = pubsub.subscribe('test-event2', testFn);
+    sub2.remove();
+    pubsub.publish('test-event2', 'test');
     expect(testFn.mock.calls.length).toBe(9);
   });
 
@@ -60,7 +59,7 @@ describe('default pubbel', () => {
 });
 
 describe('sync between tabs', () => {
-  const pubsub = pubbel({ sync: true });
+  const pubsub = pubbel();
   pubsub.subscribe('sync-event', testFn);
 
   it('simple sync', () => {

@@ -8,8 +8,13 @@ export default function observe<T>(value: T): Observable<T> {
   let _value: T = value;
   let _listeners: Subscription[] = [];
 
+  function remove(id: string): void {
+    _listeners = _listeners.filter((l) => l.id !== id);
+  }
+
   return {
     set value(value) {
+      if (_value === value) return;
       _value = value;
       _listeners.forEach((l) => l.callback(value));
     },
@@ -17,12 +22,10 @@ export default function observe<T>(value: T): Observable<T> {
       return _value;
     },
     subscribe(callback): Subscription {
-      const sub: Subscription = { id: uuid(), callback };
+      const id = uuid();
+      const sub: Subscription = { id, callback, remove: () => remove(id) };
       _listeners.push(sub);
       return sub;
-    },
-    unsubscribe({ id }): void {
-      _listeners = _listeners.filter((l) => l.id !== id);
     }
   };
 }
