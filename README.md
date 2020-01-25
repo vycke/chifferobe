@@ -26,7 +26,7 @@ You subscribe to a topic by using the `subscribe(message: String, callback: Func
 ```js
 function myFunction(...args) { ... }
 const mySubscription = myPubbel.subscribe('message-1', myCallback);
-myPubbel.unsubscribe('message-1', mySubscription);
+mysubscription.remove();
 ```
 
 Publishing a message on your `pubbel` can be done by using the `publish(message, ...args)` function.
@@ -80,5 +80,5 @@ Each `subscribe` gives back a `Subscription`. This subscription can be used to u
 
 ```js
 const subscription = observable.subscribe(myFunction);
-observable.unsubscribe(subscription);
+subscription.remove();
 ```
