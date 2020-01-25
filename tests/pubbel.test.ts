@@ -1,4 +1,4 @@
-import pubbel from '../pubbel';
+import pubbel from '../src/pubbel';
 
 const testFn = jest.fn((x) => x);
 const asyncTestFn = jest.fn().mockResolvedValue('default');
