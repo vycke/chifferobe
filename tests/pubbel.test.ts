@@ -59,7 +59,7 @@ describe('default pubbel', () => {
 });
 
 describe('sync between tabs', () => {
-  const pubsub = pubbel();
+  const pubsub = pubbel({ enableBrowserTabSync: true });
   pubsub.subscribe('sync-event', testFn);
 
   it('simple sync', () => {

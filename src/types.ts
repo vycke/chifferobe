@@ -25,3 +25,7 @@ export type Observable<T> = {
   value: T;
   subscribe(callback: Function): Subscription;
 };
+
+export type Config = {
+  enableBrowserTabSync?: boolean;
+};
