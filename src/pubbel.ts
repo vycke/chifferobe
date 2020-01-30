@@ -1,4 +1,4 @@
-import { Subscription, PubSub, List, Primitive } from './types';
+import { Subscription, PubSub, List, Primitive, Config } from './types';
 import { uuid } from './utils';
 
 // Helper for synchronizing through localStorage
@@ -8,15 +8,13 @@ function synchronize(message: string, ...args: Primitive[]): void {
 }
 
 // The actual pubsub
-export default function pubbel(): PubSub {
+export default function pubbel(config?: Config): PubSub {
   const _id: string = uuid();
   const _list: List = new Map<string, Subscription[]>();
   const get = (message: string): Subscription[] => _list.get(message) || [];
 
-  // Publish the message and optionally sync it
-  function publish(message: string, sync: boolean, ...args: Primitive[]): void {
+  function invokeCbs(message: string, ...args: Primitive[]): void {
     _list.get(message)?.forEach((sub): void => sub.callback?.(...args));
-    if (sync) synchronize(message, ...args);
   }
 
   // Remove a subscription
@@ -25,13 +23,18 @@ export default function pubbel(): PubSub {
     _list.set(msg, rem);
   }
 
-  window.addEventListener('storage', function({ key, newValue }) {
+  // Parsing window events function
+  function parseWindowEvent({ key, newValue }): void {
     if (key !== 'pubbel-event' || !newValue) return;
     const data = JSON.parse(newValue);
     if (!_list.has(data.message)) return;
 
-    publish(data.message, false, ...(data.args || []));
-  });
+    invokeCbs(data.message, data.args || []);
+  }
+
+  // Register window event listener when sync between browser tabs is enabled
+  if (config?.enableBrowserTabSync)
+    window.addEventListener('storage', parseWindowEvent);
 
   return {
     get id(): string {
@@ -39,7 +42,8 @@ export default function pubbel(): PubSub {
     },
     // publish a message onto the pubsub with optional additional parameters
     publish(message, ...args): void {
-      publish(message, true, ...args);
+      invokeCbs(message, args);
+      if (config?.enableBrowserTabSync) synchronize(message, ...args);
     },
     // Subscribe a callback to a message, that also can be removed
     subscribe(message, callback): Subscription {
