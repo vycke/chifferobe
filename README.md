@@ -54,15 +54,15 @@ br.remove(pubsub1);
 
 ## Observable - subscribe to value changes
 
-An `observable` makes it possible to observe changes to a particular value, and execute one or more functions when the value changes. It is initiated with the `observe` function of the package.
+An `observable` makes it possible to observe changes to a particular value, and execute one or more functions when the value changes.
 
 ```js
-import { observe } from 'pubbel';
+import { observable } from 'pubbel';
 
-const observable = observe('start');
-console.log(observable.value); // 'start'
-observable.value = 'second';
-console.log(observable.value); // 'start'
+const myObservable = observable('start');
+console.log(myObservable.get()); // 'start'
+observable.set('second');
+console.log(observable.get()); // 'second'
 ```
 
 You can subscribe/listen to changes by using the `subscribe` function of the observable.
@@ -71,14 +71,14 @@ You can subscribe/listen to changes by using the `subscribe` function of the obs
 let count = 0;
 const myFunction(value) => count++;
 
-observable.subscribe(myFunction);
-observable.value = 'second';
+myObservable.subscribe(myFunction);
+myObservable.set('second');
 console.log(count); // 1
 ```
 
 Each `subscribe` gives back a `Function`. This function can be used to unsubscribe to the observable, if required.
 
 ```js
-const remove = observable.subscribe(myFunction);
+const remove = myObservable.subscribe(myFunction);
 remove();
 ```

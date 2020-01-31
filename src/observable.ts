@@ -4,19 +4,16 @@ import { uuid } from './utils';
 // A helper that creates an object of which you can fetch the value, but also
 // can set the value. When setting the value, a list of subscriptions are
 // executed with the new value
-export default function observe<T>(value: T): Observable<T> {
+export default function observable<T>(value: T): Observable<T> {
   let _value: T = value;
   let _listeners: Subscription[] = [];
 
   return {
-    set value(value) {
-      if (_value === value) return;
+    set(value: T): void {
       _value = value;
       _listeners.forEach((l) => l.callback(value));
     },
-    get value(): T {
-      return _value;
-    },
+    get: (): T => _value,
     subscribe(callback): Function {
       const id = uuid();
       const sub: Subscription = { id, callback };

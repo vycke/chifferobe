@@ -1,5 +1,5 @@
 import pubbel from './pubbel';
-import observe from './observable';
+import observable from './observable';
 import broker from './broker';
 
-export { pubbel, observe, broker };
+export { pubbel, observable, broker };

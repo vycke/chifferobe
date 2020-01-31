@@ -21,7 +21,8 @@ export type Broker = {
 export type EventList = { [key: string]: Subscription[] };
 
 export type Observable<T> = {
-  value: T;
+  get(): T;
+  set(value: T): void;
   subscribe(callback: Function): Function;
 };
 
