@@ -19,7 +19,7 @@ export type Broker = {
   remove(pubbel: PubSub): void;
 };
 
-export type List = Map<string, Subscription[]>;
+export type EventList = { [key: string]: Subscription[] };
 
 export type Observable<T> = {
   value: T;
