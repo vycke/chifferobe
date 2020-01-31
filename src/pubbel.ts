@@ -12,17 +12,11 @@ export default function pubbel(config?: Config): PubSub {
   const _id: string = uuid();
   const _list: EventList = {};
 
-  function invokeCbs(message: string, ...args: Primitive[]): void {
-    _list[message]?.forEach((sub): void => sub.callback?.(...args));
-  }
-
   // Parsing window events function
   function parseWindowEvent({ key, newValue }): void {
     if (key !== 'pubbel-event' || !newValue) return;
-    const data = JSON.parse(newValue);
-    if (!_list[data.message]) return;
-
-    invokeCbs(data.message, data.args || []);
+    const { message, args } = JSON.parse(newValue);
+    _list[message]?.forEach((sub): void => sub.callback(...(args || [])));
   }
 
   // Register window event listener when sync between browser tabs is enabled
@@ -35,7 +29,7 @@ export default function pubbel(config?: Config): PubSub {
     },
     // publish a message onto the pubsub with optional additional parameters
     publish(message, ...args): void {
-      invokeCbs(message, args);
+      _list[message]?.forEach((sub): void => sub.callback?.(...args));
       if (config?.enableBrowserTabSync) synchronize(message, ...args);
     },
     // Subscribe a callback to a message, that also can be removed
