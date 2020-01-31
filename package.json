@@ -1,6 +1,6 @@
 {
   "name": "pubbel",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "lightweight dependency free JavaScript pub/sub",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

@@ -36,17 +36,17 @@ describe('default pubbel', () => {
   });
 
   it('Another subscribe & unsubscribe', () => {
-    const subscription = pubsub.subscribe('test-event', testFn);
+    const remove = pubsub.subscribe('test-event', testFn);
     pubsub.publish('test-event', 'test');
     expect(testFn.mock.calls.length).toBe(7);
-    subscription.remove();
+    remove();
     pubsub.publish('test-event', 'test');
     expect(testFn.mock.calls.length).toBe(9);
   });
 
   it('remove topic', () => {
-    const sub2 = pubsub.subscribe('test-event2', testFn);
-    sub2.remove();
+    const remove = pubsub.subscribe('test-event2', testFn);
+    remove();
     pubsub.publish('test-event2', 'test');
     expect(testFn.mock.calls.length).toBe(9);
   });

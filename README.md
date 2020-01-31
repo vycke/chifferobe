@@ -18,15 +18,15 @@ const myPubbel = pubbel();
 Optionally, you can turn on syncing between browser windows by adding a configuration `object` as a parameter to the `pubbel` function.
 
 ```js
-const myPubbel = pubbel({ sync: true });
+const myPubbel = pubbel({ enableBrowserTabSync: true });
 ```
 
-You subscribe to a topic by using the `subscribe(message: String, callback: Function)` function. This returns a `Subscription`. This subscription can be used to remove it from pubbel. The callbacks can either be synchronous or asynchronous.
+You subscribe to a topic by using the `subscribe(message: String, callback: Function)` function. This returns a `Function`. This function can be used to remove it from pubbel. The callbacks can either be synchronous or asynchronous.
 
 ```js
 function myFunction(...args) { ... }
-const mySubscription = myPubbel.subscribe('message-1', myCallback);
-mysubscription.remove();
+const removeSubscription = myPubbel.subscribe('message-1', myCallback);
+removeSubscription();
 ```
 
 Publishing a message on your `pubbel` can be done by using the `publish(message, ...args)` function.
@@ -76,9 +76,9 @@ observable.value = 'second';
 console.log(count); // 1
 ```
 
-Each `subscribe` gives back a `Subscription`. This subscription can be used to unsubscribe to the observable, if required.
+Each `subscribe` gives back a `Function`. This function can be used to unsubscribe to the observable, if required.
 
 ```js
-const subscription = observable.subscribe(myFunction);
-subscription.remove();
+const remove = observable.subscribe(myFunction);
+remove();
 ```

@@ -8,10 +8,6 @@ export default function observe<T>(value: T): Observable<T> {
   let _value: T = value;
   let _listeners: Subscription[] = [];
 
-  function remove(id: string): void {
-    _listeners = _listeners.filter((l) => l.id !== id);
-  }
-
   return {
     set value(value) {
       if (_value === value) return;
@@ -21,11 +17,13 @@ export default function observe<T>(value: T): Observable<T> {
     get value(): T {
       return _value;
     },
-    subscribe(callback): Subscription {
+    subscribe(callback): Function {
       const id = uuid();
-      const sub: Subscription = { id, callback, remove: () => remove(id) };
+      const sub: Subscription = { id, callback };
       _listeners.push(sub);
-      return sub;
+      return function(): void {
+        _listeners = _listeners.filter((l) => l.id !== id);
+      };
     }
   };
 }

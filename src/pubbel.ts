@@ -33,18 +33,14 @@ export default function pubbel(config?: Config): PubSub {
       if (config?.enableBrowserTabSync) synchronize(message, ...args);
     },
     // Subscribe a callback to a message, that also can be removed
-    subscribe(message, callback): Subscription {
+    subscribe(message, callback): Function {
       const id = uuid();
-
-      const sub: Subscription = {
-        id,
-        callback,
-        remove: function() {
-          _list[message] = _list[message].filter((s) => s.id !== id);
-        }
-      };
+      const sub: Subscription = { id, callback };
       _list[message] = (_list[message] || []).concat(sub);
-      return sub;
+
+      return function(): void {
+        _list[message] = _list[message].filter((s) => s.id !== id);
+      };
     },
     // remove an entire message from the list
     remove(message): void {

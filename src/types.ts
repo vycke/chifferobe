@@ -1,14 +1,13 @@
 export type Subscription = {
   id: string;
   callback: Function;
-  remove: Function;
 };
 
 export type Primitive = boolean | number | string | object | symbol;
 
 export type PubSub = {
   id: string;
-  subscribe(message: string, callback: Function): Subscription;
+  subscribe(message: string, callback: Function): Function;
   publish(message: string, ...args: Primitive[]): void;
   remove(message: string): void;
 };
@@ -23,7 +22,7 @@ export type EventList = { [key: string]: Subscription[] };
 
 export type Observable<T> = {
   value: T;
-  subscribe(callback: Function): Subscription;
+  subscribe(callback: Function): Function;
 };
 
 export type Config = {

@@ -20,10 +20,10 @@ describe('observable', () => {
 
   it('Unsubscribing', () => {
     const observable = observe<string>('test');
-    const sub = observable.subscribe(testFn);
+    const remove = observable.subscribe(testFn);
     observable.value = 'new value';
     expect(testFn).toBeCalledTimes(2);
-    sub.remove();
+    remove();
     observable.value = 'new value';
     expect(testFn).toBeCalledTimes(2);
   });
