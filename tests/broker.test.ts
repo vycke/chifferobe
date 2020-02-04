@@ -15,11 +15,11 @@ describe('pubbel broker', () => {
   });
 
   afterEach(() => {
-    pubsub1.remove('test-event-1');
-    pubsub1.remove('test-event-1');
-    pubsub2.remove('test-event-1');
-    br.remove(pubsub1);
-    br.remove(pubsub2);
+    pubsub1.delete('test-event-1');
+    pubsub1.delete('test-event-1');
+    pubsub2.delete('test-event-1');
+    br.delete(pubsub1);
+    br.delete(pubsub2);
   });
 
   it('publishing broker messages', () => {
@@ -30,7 +30,7 @@ describe('pubbel broker', () => {
   });
 
   it('removing', () => {
-    br.remove(pubsub2);
+    br.delete(pubsub2);
     br.publish('test-event-1');
     expect(testFn.mock.calls.length).toBe(4);
   });

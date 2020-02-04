@@ -1,22 +1,16 @@
-import { Subscription, PubSub, EventList, Primitive, Config } from './types';
+import { Subscription, PubSub, PubSubConfig } from './types';
 import { uuid } from './utils';
 
-// Helper for synchronizing through localStorage
-function synchronize(message: string, ...args: Primitive[]): void {
-  localStorage.setItem('pubbel-event', JSON.stringify({ message, args }));
-  localStorage.removeItem('pubbel-event');
-}
-
 // The actual pubsub
-export default function pubbel(config?: Config): PubSub {
+export default function pubbel(config?: PubSubConfig): PubSub {
   const _id: string = uuid();
-  const _list: EventList = {};
+  const _list: Map<string, Subscription[]> = new Map<string, Subscription[]>();
 
   // Parsing window events function
   function parseWindowEvent({ key, newValue }): void {
     if (key !== 'pubbel-event' || !newValue) return;
     const { message, args } = JSON.parse(newValue);
-    _list[message]?.forEach((sub): void => sub.callback(...(args || [])));
+    _list.get(message)?.forEach((sub): void => sub.callback(...(args || [])));
   }
 
   // Register window event listener when sync between browser tabs is enabled
@@ -24,27 +18,28 @@ export default function pubbel(config?: Config): PubSub {
     window.addEventListener('storage', parseWindowEvent);
 
   return {
-    get id(): string {
-      return _id;
-    },
+    id: _id,
     // publish a message onto the pubsub with optional additional parameters
     publish(message, ...args): void {
-      _list[message]?.forEach((sub): void => sub.callback?.(...args));
-      if (config?.enableBrowserTabSync) synchronize(message, ...args);
+      _list.get(message)?.forEach((sub): void => sub.callback?.(...args));
+      if (config?.enableBrowserTabSync) {
+        localStorage.setItem('pubbel-event', JSON.stringify({ message, args }));
+        localStorage.removeItem('pubbel-event');
+      }
     },
     // Subscribe a callback to a message, that also can be removed
     subscribe(message, callback): Function {
-      const id = uuid();
-      const sub: Subscription = { id, callback };
-      _list[message] = (_list[message] || []).concat(sub);
+      const sub: Subscription = { id: uuid(), callback };
+      const list: Subscription[] = (_list.get(message) || []).concat([sub]);
+      _list.set(message, list);
 
       return function(): void {
-        _list[message] = _list[message].filter((s) => s.id !== id);
+        const rem = (_list.get(message) || []).filter((s) => s.id !== sub.id);
+        _list.set(message, rem);
       };
     },
-    // remove an entire message from the list
-    remove(message): void {
-      _list[message] && delete _list[message];
+    delete(message: string): void {
+      _list.delete(message);
     }
   };
 }

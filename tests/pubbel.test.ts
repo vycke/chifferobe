@@ -12,14 +12,14 @@ describe('default pubbel', () => {
   });
 
   afterEach(() => {
-    pubsub.remove('test-event');
+    pubsub.delete('test-event');
   });
 
   it('ID', () => {
     expect(pubsub.id.length).toBe(5);
   });
 
-  it('not Called', () => {
+  it('not called', () => {
     pubsub.publish('not-event');
     expect(testFn.mock.calls.length).toBe(0);
   });
@@ -46,6 +46,14 @@ describe('default pubbel', () => {
 
   it('remove topic', () => {
     const remove = pubsub.subscribe('test-event2', testFn);
+    remove();
+    pubsub.publish('test-event2', 'test');
+    expect(testFn.mock.calls.length).toBe(9);
+  });
+
+  it('remove topic while not existing', () => {
+    const remove = pubsub.subscribe('test-event2', testFn);
+    pubsub.delete('test-event2');
     remove();
     pubsub.publish('test-event2', 'test');
     expect(testFn.mock.calls.length).toBe(9);
