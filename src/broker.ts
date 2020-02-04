@@ -7,7 +7,7 @@ export default function broker(): Broker {
     register(...pubbels): void {
       _pubbels.push(...pubbels);
     },
-    remove(pubbel): void {
+    delete(pubbel): void {
       const remainder = _pubbels.filter((p) => p.id !== pubbel.id);
       _pubbels = remainder;
     },

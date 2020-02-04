@@ -29,11 +29,12 @@ const removeSubscription = myPubbel.subscribe('message-1', myCallback);
 removeSubscription();
 ```
 
-Publishing a message on your `pubbel` can be done by using the `publish(message, ...args)` function.
+Publishing a message on your `pubbel` can be done by using the `publish(message, ...args)` function. Removing a topic completely from the pubsub can be done with the `delete(message)` function.
 
 ```js
 myPubbel.publish('message-1');
 myPubbel.publish('message-2', data);
+myPubbel.delete('message-1');
 ```
 
 ## Multiple pubbel instances
@@ -49,7 +50,7 @@ const pubsub1 = pubbel();
 
 br.register(pubsub1, pubsub2, ...);
 br.publish('message-1', data);
-br.remove(pubsub1);
+br.delete(pubsub1);
 ```
 
 ## Observable - subscribe to value changes

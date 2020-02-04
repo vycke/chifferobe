@@ -3,22 +3,20 @@ export type Subscription = {
   callback: Function;
 };
 
-export type Primitive = boolean | number | string | object | symbol;
+type Primitive = boolean | number | string | object | symbol;
 
 export type PubSub = {
   id: string;
   subscribe(message: string, callback: Function): Function;
   publish(message: string, ...args: Primitive[]): void;
-  remove(message: string): void;
+  delete(message: string): void;
 };
 
 export type Broker = {
   publish(message: string, ...args: Primitive[]): void;
   register(...pubbels: PubSub[]): void;
-  remove(pubbel: PubSub): void;
+  delete(pubbel: PubSub): void;
 };
-
-export type EventList = { [key: string]: Subscription[] };
 
 export type Observable<T> = {
   get(): T;
@@ -26,6 +24,6 @@ export type Observable<T> = {
   subscribe(callback: Function): Function;
 };
 
-export type Config = {
+export type PubSubConfig = {
   enableBrowserTabSync?: boolean;
 };
