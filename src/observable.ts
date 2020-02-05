@@ -15,11 +15,10 @@ export default function observable<T>(value: T): Observable<T> {
     },
     get: (): T => _value,
     subscribe(callback): Function {
-      const id = uuid();
-      const sub: Subscription = { id, callback };
+      const sub: Subscription = { id: uuid(), callback };
       _listeners.push(sub);
       return function(): void {
-        _listeners = _listeners.filter((l) => l.id !== id);
+        _listeners = _listeners.filter((l) => l.id !== sub.id);
       };
     }
   };

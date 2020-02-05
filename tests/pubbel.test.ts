@@ -1,4 +1,4 @@
-import pubbel from '../src/pubbel';
+import pubbel from '../src/pubsub';
 
 const testFn = jest.fn((x) => x);
 const asyncTestFn = jest.fn().mockResolvedValue('default');
@@ -13,10 +13,6 @@ describe('default pubbel', () => {
 
   afterEach(() => {
     pubsub.delete('test-event');
-  });
-
-  it('ID', () => {
-    expect(pubsub.id.length).toBe(5);
   });
 
   it('not called', () => {

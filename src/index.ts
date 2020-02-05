@@ -1,5 +1,4 @@
-import pubbel from './pubbel';
+import pubbel from './pubsub';
 import observable from './observable';
-import broker from './broker';
 
-export { pubbel, observable, broker };
+export { pubbel, observable };
