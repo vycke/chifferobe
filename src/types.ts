@@ -12,7 +12,8 @@ export type PubSub = {
 };
 
 export type PubSubConfig = {
-  enableBrowserTabSync: boolean;
+  enableBrowserTabSync?: boolean;
+  onPublish?: Function;
 };
 
 export type Observable<T> = {

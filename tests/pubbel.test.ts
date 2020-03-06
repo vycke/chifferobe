@@ -62,6 +62,13 @@ describe('default pubbel', () => {
   });
 });
 
+it('pubbel with onPublish', () => {
+  const onpublishFn = jest.fn((x) => x);
+  const pubsub = pubbel({ onPublish: onpublishFn });
+  pubsub.publish('test');
+  expect(onpublishFn.mock.calls.length).toBe(1);
+});
+
 describe('sync between tabs', () => {
   const pubsub = pubbel({ enableBrowserTabSync: true });
   pubsub.subscribe('sync-event', testFn);

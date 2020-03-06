@@ -24,6 +24,7 @@ export default function pubsub(config?: PubSubConfig): PubSub {
         localStorage.setItem('pubbel-event', JSON.stringify({ message, args }));
         localStorage.removeItem('pubbel-event');
       }
+      if (config?.onPublish) config.onPublish(message);
     },
     // Subscribe a callback to a message, that also can be removed
     subscribe(message, callback): Function {

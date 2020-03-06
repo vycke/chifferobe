@@ -15,7 +15,7 @@ A pubsub can be created by using the `pubbel` function. Optionally, you can turn
 ```js
 import { pubbel } from 'pubbel';
 const pubsub = pubbel();
-const pubsub = pubbel({ enableBrowserTabSync: true });
+const pubsub = pubbel({ enableBrowserTabSync?: true, onPublish?: (message) => myFn(message) });
 ```
 
 You subscribe to a topic by using the `subscribe(message: String, callback: Function)` function. This returns a `Function`. This function can be used to remove it from pubbel. The callbacks can either be synchronous or asynchronous.
