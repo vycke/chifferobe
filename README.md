@@ -6,7 +6,7 @@
 [![Minified size](https://img.shields.io/bundlephobia/min/pubbel?label=minified)](https://www.npmjs.com/package/pubbel)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Pubbel is a very light-weight JavaScript library that makes it possible to subscribe to changes without depending on a framework. It relies on a [publish-subscribe](https://en.wikipedia.org/wiki/Publish%E2%80%93subscribe_pattern) implemementation for asynchronous communication between for instance UI components, observables for specific values and queues when many changes happen but cannot be processed, yet. This package helps you process actions in the background that have nothing to do with your UI.
+Pubbel is a light-weight JavaScript library around event-driven components. It includes a [publish-subscribe](https://en.wikipedia.org/wiki/Publish%E2%80%93subscribe_pattern) implemementation for asynchronous communication between for instance UI components, an event-driven data storage with a decoupled state interface that can be used for state-management, and an asynchronous queue that emits events.
 
 ## Pub/Sub
 
@@ -34,33 +34,110 @@ pubsub.publish('message-2', data);
 pubsub.delete('message-1');
 ```
 
-## Observable - subscribe to value changes
+## Event-driven store
 
-An `observable` makes it possible to observe changes to a particular value, and execute one or more functions when the value changes.
+The store can be created by importing the `default` value of the `stateq` package. It provides the possibility to set an initial state, and add some optional configurations. In the configuration, you have the ability to set:
 
-```js
-import { observable } from 'pubbel';
-
-const myObservable = observable('start');
-console.log(myObservable.get()); // 'start'
-observable.set('second');
-console.log(observable.get()); // 'second'
-```
-
-You can subscribe/listen to changes by using the `subscribe` function of the observable.
+- **`onEvent: (path, value, event) => void`**: a callback that is triggered on each event in the data storage.
 
 ```js
-let count = 0;
-const myFunction(value) => count++;
+import { store } from 'pubbel';
 
-myObservable.subscribe(myFunction);
-myObservable.set('second');
-console.log(count); // 1
+const initialState = { counter: 1 };
+const config = {
+  onEvent: (path, value, type) => console.log(path, value, type)
+};
+
+const store = stateq(initialState, config);
 ```
 
-Each `subscribe` gives back a `Function`. This function can be used to unsubscribe to the observable, if required.
+### Store events
+
+In total there are five different events that can be triggered on the data storage in stateq.
+
+- **`get(path: string, def?: any)`**: gives back the value for a given path in the store;
+- **`set(path: string, value: any)`**: sets the value for a given path in the store;
+- **`update(path: string, fn: Function)`**: uses a function to mutate the original value in the store, for a given path (e.g. `store.update('counter', (c) => c + 1)`);
+- **`remove(path: string)`**: removes a value for a given path in the store;
+
+You can also chain the events together in a transaction. The code below does invoke the `onEvent` in the configuration once for each event in the transaction.
 
 ```js
-const remove = myObservable.subscribe(myFunction);
-remove();
+// transaction example
+import store from './store';
+
+const { update, set } = store;
+
+function transaction() {
+  set('my.nested.object', 'value 1');
+  update('my.other.nested.object', 'value 2');
+  if (store.get('counter') > 10) set('counter', 0);
+}
+transaction();
 ```
+
+### Using the storage in React components
+
+When combined with an observable or something like a [pubsub](https://github.com/kevtiq/pubbel), it can easily be used to as a React Hook. First, the store and pubsub need to be configured.
+
+```js
+// store.js
+import { pubbel, store } from 'pubbel';
+
+export const pubsub = pubbel();
+const config = { onEvent: (p, v) => pubsub.publish(p, v) };
+export const store = stateq({}, config);
+```
+
+With the store and pubsub configured, a custom hook can be created.
+
+```js
+// useStoreValue.js hook
+import { useState, useRef } from 'react';
+import { store, pubsub } from './store';
+
+export default function useStoreValue(path, def) {
+  // function to force rerender
+  const [, rerender] = useReducer((c) => c + 1, 0);
+  const value = useRef(store.get(path, def));
+
+  // subscription to the pubsub events for the store
+  useEffect(() => {
+    const removeSubscription = pubsub.subscribe(path, (v) => {
+      value.current = v;
+      rerender();
+    });
+    // remove subscription
+    return () => removeSubscription();
+  }, []);
+
+  return value.current;
+}
+```
+
+## Asynchronous queue
+
+The API of the asynchronous queu allows for three different parameters:
+
+- `concurrent: number`: the number of concurrent async jobs that can run simultaneously;
+- `onEvent?: (result, status, resolve | reject)`: a function that is triggered in resolving or rejecting each job. The result of the job and the (new) status of jobbel are given as parameters;
+
+```js
+import { queue } from 'pubbel';
+
+function event(result, state, type) { ... }
+const manager = queue({ concurrent: 3, onEvent: resolve });
+
+// .push requires (async) functions as input
+manager.push(...myAsyncApiCallFunctions);
+
+...
+
+console.log(manager.status); // { pending: 0, resolved: x, rejected: y }
+```
+
+In the `resolve` and `reject` callback functions, the second parameter shows the current state of the job manager. It holds the following properties:
+
+- `pending`: the amount of jobs currently running. If this is `0` the job manager is finished;
+- `resolved`: the amount of jobs successfully finished;
+- `rejected`: the amount of jobs failed;.

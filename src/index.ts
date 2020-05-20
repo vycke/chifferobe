@@ -1,4 +1,4 @@
-import pubbel from './pubsub';
-import observable from './observable';
-
-export { pubbel, observable };
+export { default as pubsub } from './pubsub';
+export { default as observable } from './observable';
+export { default as queue } from './queue';
+export { default as store } from './store';
