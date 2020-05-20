@@ -1,5 +1,19 @@
-import { freeze, clone } from './utils';
 import { Primitive, Store, StoreConfig, SEvent } from './types';
+
+// deep freeze of objects
+function freeze<T extends object>(obj: T): T {
+  Object.freeze(obj);
+  Object.getOwnPropertyNames(obj).forEach(
+    (prop) => !Object.isFrozen(obj[prop]) && freeze<object>(obj[prop])
+  );
+
+  return obj;
+}
+
+// object deep cloning
+function clone(obj: object): object {
+  return JSON.parse(JSON.stringify(obj));
+}
 
 export default function store(init = {}, config?: StoreConfig): Store {
   let _state = freeze(init);
