@@ -21,6 +21,7 @@ export type Subscription = {
 // Async queue types
 export type QState = {
   pending: number;
+  running: number;
   resolved: number;
   rejected: number;
 };

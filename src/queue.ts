@@ -1,17 +1,24 @@
 import { QState, Queue, QueueConfig, Primitive } from './types';
 
-const initialState: QState = { pending: 0, resolved: 0, rejected: 0 };
+const initialState: QState = {
+  running: 0,
+  pending: 0,
+  resolved: 0,
+  rejected: 0
+};
 
-type Event = 'start' | 'reject' | 'resolve';
+type Event = 'start' | 'reject' | 'resolve' | 'schedule';
 export function reduce(state: QState, action: Event): QState {
-  const { pending, resolved, rejected } = state;
+  const { running, pending, resolved, rejected } = state;
   switch (action) {
-    case 'start':
+    case 'schedule':
       return { ...state, pending: pending + 1 };
+    case 'start':
+      return { ...state, running: running + 1, pending: pending - 1 };
     case 'resolve':
-      return { ...state, pending: pending - 1, resolved: resolved + 1 };
+      return { ...state, running: running - 1, resolved: resolved + 1 };
     case 'reject':
-      return { ...state, pending: pending - 1, rejected: rejected + 1 };
+      return { ...state, running: running - 1, rejected: rejected + 1 };
   }
 }
 
@@ -20,7 +27,7 @@ export default function queue(config: QueueConfig): Queue {
   let _state: QState = initialState;
 
   function startJob(): Promise<void> | undefined {
-    if (_jobs.length === 0 || _state.pending >= config.concurrent) return;
+    if (_jobs.length === 0 || _state.running >= config.concurrent) return;
 
     const fn = _jobs.shift() as Function;
     _state = reduce(_state, 'start');
@@ -37,9 +44,10 @@ export default function queue(config: QueueConfig): Queue {
   }
 
   return {
-    push(...fns): void {
-      _jobs.push(...fns);
-      const amount = config.concurrent - _state.pending;
+    push(fn): void {
+      _jobs.push(fn);
+      _state = reduce(_state, 'schedule');
+      const amount = config.concurrent - _state.running;
       for (let i = 0; i < amount; i++) startJob();
     },
     reset(): void {
