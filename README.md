@@ -129,7 +129,7 @@ function event(result, state, type) { ... }
 const manager = queue({ concurrent: 3, onEvent: resolve });
 
 // .push requires (async) functions as input
-manager.push(...myAsyncApiCallFunctions);
+manager.push(myAPICall);
 
 ...
 
@@ -138,6 +138,7 @@ console.log(manager.status); // { pending: 0, resolved: x, rejected: y }
 
 In the `resolve` and `reject` callback functions, the second parameter shows the current state of the job manager. It holds the following properties:
 
-- `pending`: the amount of jobs currently running. If this is `0` the job manager is finished;
+- `pending`: the amount of jobs waiting to be executed;
 - `resolved`: the amount of jobs successfully finished;
-- `rejected`: the amount of jobs failed;.
+- `rejected`: the amount of jobs failed;
+- `running`: the amount of currently running jobs;
