@@ -29,6 +29,7 @@ export type QState = {
 export type Queue = {
   push(...fns: Function[]): void;
   status: QState;
+  stop(): void;
   reset(): void;
 };
 
