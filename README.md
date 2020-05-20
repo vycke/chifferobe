@@ -10,28 +10,28 @@ Pubbel is a light-weight JavaScript library around event-driven components. It i
 
 ## Pub/Sub
 
-A pubsub can be created by using the `pubbel` function. Optionally, you can turn on syncing between browser windows by adding a configuration `object` as a parameter to the `pubbel` function.
+A pubsub can be created by using the `pubsub` function. Optionally, you can turn on syncing between browser windows by adding a configuration `object` as a parameter to the `pubsub` function.
 
 ```js
-import { pubbel } from 'pubbel';
-const pubsub = pubbel();
-const pubsub = pubbel({ enableBrowserTabSync?: true, onPublish?: (message) => myFn(message) });
+import { pubsub } from 'pubbel';
+const myPubsub = pubsub();
+const myPubsub = pubsub({ enableBrowserTabSync?: true, onPublish?: (message) => myFn(message) });
 ```
 
 You subscribe to a topic by using the `subscribe(message: String, callback: Function)` function. This returns a `Function`. This function can be used to remove it from pubbel. The callbacks can either be synchronous or asynchronous.
 
 ```js
 function myFunction(...args) { ... }
-const removeSubscription = pubsub.subscribe('message-1', myCallback);
+const removeSubscription = myPubsub.subscribe('message-1', myCallback);
 removeSubscription();
 ```
 
 Publishing a message on your `pubsub` can be done by using the `publish(message, ...args)` function. Removing a topic completely from the pubsub can be done with the `delete(message)` function.
 
 ```js
-pubsub.publish('message-1');
-pubsub.publish('message-2', data);
-pubsub.delete('message-1');
+myPubsub.publish('message-1');
+myPubsub.publish('message-2', data);
+myPubsub.delete('message-1');
 ```
 
 ## Event-driven store

@@ -1,6 +1,6 @@
 {
   "name": "pubbel",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "lightweight dependency free event-driven JavaScript components",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

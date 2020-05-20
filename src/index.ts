@@ -1,3 +1,5 @@
-export { default as pubsub } from './pubsub';
-export { default as queue } from './queue';
-export { default as store } from './store';
+import pubsub from './pubsub';
+import queue from './queue';
+import store from './store';
+
+export { pubsub, queue, store };
