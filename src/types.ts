@@ -24,8 +24,6 @@ export type Subscription = {
 export type QState = {
   pending: number;
   running: number;
-  resolved: number;
-  rejected: number;
 };
 
 export type Queue = {
@@ -38,18 +36,17 @@ export type Queue = {
 export type QueueConfig = {
   concurrent: number;
   instant?: boolean;
-  onEvent?(result: Primitive, status: QState, type: 'resolve' | 'reject'): void;
+  onResolve?(v: Primitive, status: QState): void;
 };
 
 // Event store types
-export type SEvent = 'set' | 'update' | 'remove';
 export type Store = {
-  get: (path: string) => Primitive;
-  set: (path: string, value: Primitive) => void;
-  update: (path: string, fn: Function) => void;
-  remove: (path: string) => void;
+  get(path: string): Primitive;
+  update(path: string, arg: Primitive | Function): void;
+  subscribe(path, callback: Callback): Function;
 };
 
 export type StoreConfig = {
-  onEvent?: (event: SEvent, path: string, value?: Primitive) => void;
+  persist?: boolean;
+  onUpdate?(path: string, value?: Primitive): void;
 };

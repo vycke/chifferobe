@@ -1,45 +1,47 @@
 import createStore from '../src/store';
 
-const mock = jest.fn((x) => x);
-
-describe('store', () => {
-  it('get, set, update, remove', () => {
+describe('Decoupled store', () => {
+  it('Basic operations', () => {
     const store = createStore();
+    store.update('key', 'value');
+    expect(store.get('key')).toBe('value');
+    store.update('key', 'value 2');
+    expect(store.get('key')).toBe('value 2');
+    store.update('key', () => 'value 3');
+    expect(store.get('key')).toBe('value 3');
 
-    store.set('', 'test');
-    expect(store.get('')).toEqual({});
-
-    expect(store.get('my.nested.object')).toBe(undefined);
-    store.set('my.nested.object', 'value');
-    expect(store.get('my.nested.object')).toEqual('value');
-    const { update } = store;
-    update('my.nested.object', () => 'value 1');
-    expect(store.get('my.nested.object')).toEqual('value 1');
-    update('my.nested.object', () => 'value 2');
-    expect(store.get('my.nested.object')).toEqual('value 2');
-    update('my.nested.object', () => 'value 2');
-    expect(store.get('my.nested.object')).toEqual('value 2');
-    store.set('my.nested.object', 'value 2');
-    expect(store.get('my.nested.object')).toEqual('value 2');
-    store.remove('my.nested');
-    expect(store.get('')).toEqual({ my: { nested: undefined } });
-  });
-
-  it('with onEvent and default setting', () => {
-    const store = createStore({ counter: 1 }, { onEvent: mock });
-    store.set('my.nested.object1', 'value');
-    store.set('my.nested.object2', 'value');
-    store.update('counter', (v) => v + 1);
+    store.update('my.nested.object', 'value');
     expect(store.get('')).toEqual({
-      counter: 2,
+      key: 'value 3',
       my: {
         nested: {
-          object1: 'value',
-          object2: 'value'
+          object: 'value'
         }
       }
     });
+    expect(store.get('my.nested.object')).toEqual('value');
+  });
 
+  it('Immutability', () => {
+    const store = createStore();
+    store.update('key', 'value');
+    let key = store.get('key');
+    key = 'value 2';
+    expect(key).toBe('value 2');
+    expect(store.get('key')).toEqual('value');
+  });
+
+  it('store events and subscription', () => {
+    const mock = jest.fn((x) => x);
+    const store = createStore({ onUpdate: mock });
+    expect(mock).toBeCalledTimes(0);
+    store.update('key', 'value');
+    expect(mock).toBeCalledTimes(1);
+    const remove = store.subscribe('key', mock);
+    store.update('key', 'value 1');
+    expect(mock).toBeCalledTimes(3);
+    remove();
+    store.update('key', 'value 1');
     expect(mock).toBeCalledTimes(3);
   });
 });

@@ -19,7 +19,7 @@ describe('Async Queue', () => {
     const manager = queue({
       concurrent: 2,
       instant: true,
-      onEvent: callback
+      onResolve: callback
     });
 
     for (let i = 0; i < 10; i++) {
@@ -35,20 +35,18 @@ describe('Async Queue', () => {
     await wait(10);
     expect(callback.mock.calls.length).toBe(2);
     expect(manager.status.pending).toBe(6);
-    expect(manager.status.resolved).toBe(2);
 
     await wait(10);
     expect(callback.mock.calls.length).toBe(4);
-    expect(manager.status.resolved).toBe(4);
+    expect(manager.status.pending).toBe(4);
 
     await wait(10);
     expect(callback.mock.calls.length).toBe(5);
-    expect(manager.status.resolved).toBe(5);
+    expect(manager.status.pending).toBe(3);
 
     await wait(10);
     expect(callback.mock.calls.length).toBe(7);
-    expect(manager.status.resolved).toBe(6);
-    expect(manager.status.rejected).toBe(1);
+    expect(manager.status.pending).toBe(1);
 
     await wait(30);
     expect(callback.mock.calls.length).toBe(9);
@@ -65,7 +63,8 @@ describe('Async Queue', () => {
     manager.push(mock);
     manager.push(error);
     await wait();
-    expect(manager.status.resolved).toBe(1);
+    expect(manager.status.pending).toBe(0);
+    expect(manager.status.running).toBe(0);
   });
 
   it('Start & stop', async () => {
@@ -81,6 +80,7 @@ describe('Async Queue', () => {
     expect(manager.status.pending).toBe(7);
     manager.start();
     await wait(300);
-    expect(manager.status.resolved).toBe(10);
+    expect(manager.status.pending).toBe(0);
+    expect(manager.status.running).toBe(0);
   });
 });

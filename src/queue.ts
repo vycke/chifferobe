@@ -1,16 +1,10 @@
 import { QState, Queue, QueueConfig, Primitive } from './types';
 
-const initialState: QState = {
-  running: 0,
-  pending: 0,
-  resolved: 0,
-  rejected: 0
-};
-
-type Event = 'start' | 'reject' | 'resolve' | 'schedule';
+type Event = 'start' | 'resolve' | 'schedule';
+const initialState: QState = { running: 0, pending: 0 };
 
 export function reduce(state: QState, action: Event): QState {
-  let { running, pending, resolved, rejected } = state;
+  let { running, pending } = state;
 
   switch (action) {
     case 'schedule':
@@ -22,15 +16,10 @@ export function reduce(state: QState, action: Event): QState {
       break;
     case 'resolve':
       running--;
-      resolved++;
-      break;
-    case 'reject':
-      running--;
-      rejected++;
       break;
   }
 
-  return { running, pending, resolved, rejected };
+  return { running, pending };
 }
 
 export default function queue(config: QueueConfig): Queue {
@@ -45,15 +34,13 @@ export default function queue(config: QueueConfig): Queue {
     const fn = _jobs.shift() as Function;
     _state = reduce(_state, 'start');
     fn()
-      .then((r: Primitive) => {
+      .then((r: Primitive) => r)
+      .catch((e: Error) => e)
+      .finally((v: Primitive) => {
         _state = reduce(_state, 'resolve');
-        config.onEvent?.(r, _state, 'resolve');
-      })
-      .catch((e: Error) => {
-        _state = reduce(_state, 'reject');
-        config.onEvent?.(e, _state, 'reject');
-      })
-      .finally(() => startJob());
+        config.onResolve?.(v, _state);
+        startJob();
+      });
   }
 
   return {
@@ -61,7 +48,6 @@ export default function queue(config: QueueConfig): Queue {
       _jobs.push(fn);
       _state = reduce(_state, 'schedule');
       const amount = config.concurrent - _state.running;
-      if (!_active) return;
       for (let i = 0; i < amount; i++) startJob();
     },
     stop(): void {
