@@ -4,11 +4,13 @@ import { Channel, ChannelConfig } from './types';
 export default function channel(name: string, config?: ChannelConfig): Channel {
   const _pubsub = pubsub(config);
 
-  window.addEventListener('storage', function({ key, newValue }): void {
+  function parseWindowEvent({ key, newValue }): void {
     if (key !== name || !newValue) return;
     const { message, args } = JSON.parse(newValue);
-    _pubsub.publish(message, ...args);
-  });
+    _pubsub.publish(message, ...(args || []));
+  }
+
+  window.addEventListener('storage', parseWindowEvent);
 
   return {
     publish(message, ...args): void {

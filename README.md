@@ -15,7 +15,7 @@ A pubsub can be created by using the `pubsub` function. Optionally, you can turn
 ```js
 import { pubsub } from 'pubbel';
 const myPubsub = pubsub();
-const myPubsub = pubsub({ enableBrowserTabSync?: true, onPublish?: (message) => myFn(message) });
+const myPubsub = pubsub({ onPublish?: (message) => myFn(message) });
 ```
 
 You subscribe to a topic by using the `subscribe(message: String, callback: Function)` function. This returns a `Function`. This function can be used to remove it from pubbel. The callbacks can either be synchronous or asynchronous.
@@ -34,6 +34,20 @@ myPubsub.publish('message-2', data);
 myPubsub.delete('message-1');
 ```
 
+## Broadcast channel
+
+The broadcast `channel` can be used to synhronize data between browser tabs of running web applications. Synchronization is done via the `localStorage` (due to browser support), but no data persists in the storage.
+
+```js
+import { channel } from 'pubbel';
+
+const myChannel = channel('my-channel', { onPublish?: (message) => myFn(message) });
+const removeSubscription = myChannel.subscribe('message-1', myCallback);
+removeSubscription();
+myChannel.publish('message-1', data);
+myChannel.delete('message-1');
+```
+
 ## Event-driven store
 
 The store can be created by importing the `default` value of the `stateq` package. It provides the possibility to set an initial state, and add some optional configurations. In the configuration, you have the ability to set:
@@ -48,7 +62,7 @@ const config = {
   onEvent: (path, value, type) => console.log(path, value, type)
 };
 
-const store = stateq(initialState, config);
+const myStore = store(initialState, config);
 ```
 
 ### Store events
