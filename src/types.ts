@@ -1,21 +1,23 @@
 // Generic types
 export type Primitive = boolean | number | string | object | symbol;
 
+type CbFn = (data?: Primitive) => void;
+type PublishCb = (message: string, ...args: Primitive[]) => void;
+
 // Pub/Sub types
-export type PubSub = {
-  subscribe(message: string, callback: Function): Function;
-  publish(message: string, ...args: Primitive[]): void;
+export type Channel = {
+  subscribe(message: string, callback: CbFn): Function;
+  publish: PublishCb;
   delete(message: string): void;
 };
 
-export type PubSubConfig = {
-  enableBrowserTabSync?: boolean;
-  onPublish?: Function;
-};
+export type ChannelConfig = { onPublish?: PublishCb };
+export type PubSubConfig = ChannelConfig;
+export type PubSub = Channel;
 
 export type Subscription = {
   id: string;
-  callback: Function;
+  callback: CbFn;
 };
 
 // Async queue types
