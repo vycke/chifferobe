@@ -11,7 +11,7 @@ export default function pubsub(config?: PubSubConfig): PubSub {
   return {
     // publish a message onto the pubsub with optional additional parameters
     publish(message, ...args): void {
-      _list.get(message)?.forEach((sub): void => sub.callback?.(...args));
+      _list.get(message)?.forEach((sub): void => sub.callback(...args));
       if (config?.onPublish) config.onPublish(message);
     },
     // Subscribe a callback to a message, that also can be removed

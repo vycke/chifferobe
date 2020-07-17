@@ -1,56 +1,55 @@
 import channel from '../src/channel';
 
-const testFn = jest.fn((x) => x);
-
+const fn = jest.fn((x) => x);
 const channelName = 'mychannel';
+const success = 'success';
+const failed = 'failed';
 
-describe('channel', () => {
+describe('Browser channel', () => {
   const ch = channel(channelName);
-  ch.subscribe('sync-event', testFn);
+  ch.subscribe(success, fn);
 
-  it('faulty sync', () => {
-    expect(testFn.mock.calls.length).toBe(0);
+  it('Failed sync events', () => {
+    expect(fn.mock.calls.length).toBe(0);
 
     window.dispatchEvent(
       new StorageEvent('storage', {
         key: channelName,
-        newValue: JSON.stringify({ message: 'sync-event-2' })
+        newValue: JSON.stringify({ message: failed })
       })
     );
-    expect(testFn.mock.calls.length).toBe(0);
+    expect(fn.mock.calls.length).toBe(0);
 
     window.dispatchEvent(
       new StorageEvent('storage', {
         key: channelName
       })
     );
-    expect(testFn.mock.calls.length).toBe(0);
+    expect(fn.mock.calls.length).toBe(0);
 
     window.dispatchEvent(new StorageEvent('storage', {}));
-    expect(testFn.mock.calls.length).toBe(0);
+    expect(fn.mock.calls.length).toBe(0);
   });
-  it('correct sync', () => {
+
+  it('Successful sync events', () => {
     window.dispatchEvent(
       new StorageEvent('storage', {
         key: channelName,
-        newValue: JSON.stringify({ message: 'sync-event' })
+        newValue: JSON.stringify({ message: success })
       })
     );
 
-    expect(testFn.mock.calls.length).toBe(1);
-  });
-
-  it('sync with data', () => {
+    expect(fn.mock.calls.length).toBe(1);
     window.dispatchEvent(
       new StorageEvent('storage', {
         key: channelName,
-        newValue: JSON.stringify({ message: 'sync-event', args: ['value'] })
+        newValue: JSON.stringify({ message: success, args: ['value'] })
       })
     );
-    expect(testFn.mock.calls.length).toBe(2);
+    expect(fn.mock.calls.length).toBe(2);
   });
 
-  it('send over to other browsers', () => {
-    ch.publish('sync-event');
+  it('Publish event', () => {
+    ch.publish(success);
   });
 });

@@ -31,12 +31,13 @@ export type QState = {
 export type Queue = {
   push(...fns: Function[]): void;
   status: QState;
+  start(): void;
   stop(): void;
-  reset(): void;
 };
 
 export type QueueConfig = {
   concurrent: number;
+  instant?: boolean;
   onEvent?(result: Primitive, status: QState, type: 'resolve' | 'reject'): void;
 };
 
