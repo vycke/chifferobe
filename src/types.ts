@@ -1,52 +1,53 @@
 // Generic types
 export type Primitive = boolean | number | string | object | symbol;
 
+type Callback = (...args: Primitive[]) => void;
+type PublishFn = (message: string, ...args: Primitive[]) => void;
+
 // Pub/Sub types
-export type PubSub = {
-  subscribe(message: string, callback: Function): Function;
-  publish(message: string, ...args: Primitive[]): void;
+export type Channel = {
+  subscribe(message: string, callback: Callback): Function;
+  publish: PublishFn;
   delete(message: string): void;
 };
+export type PubSub = Channel;
 
-export type PubSubConfig = {
-  enableBrowserTabSync?: boolean;
-  onPublish?: Function;
-};
+export type ChannelConfig = { onPublish?: PublishFn };
+export type PubSubConfig = ChannelConfig;
 
 export type Subscription = {
   id: string;
-  callback: Function;
+  callback: Callback;
 };
 
 // Async queue types
 export type QState = {
   pending: number;
   running: number;
-  resolved: number;
-  rejected: number;
+  active: boolean;
 };
 
 export type Queue = {
   push(...fns: Function[]): void;
   status: QState;
+  start(): void;
   stop(): void;
-  reset(): void;
 };
 
 export type QueueConfig = {
   concurrent: number;
-  onEvent?(result: Primitive, status: QState, type: 'resolve' | 'reject'): void;
+  instant: boolean;
+  onResolve?(v: Primitive, status: QState): void;
 };
 
 // Event store types
-export type SEvent = 'set' | 'update' | 'remove';
 export type Store = {
-  get: (path: string) => Primitive;
-  set: (path: string, value: Primitive) => void;
-  update: (path: string, fn: Function) => void;
-  remove: (path: string) => void;
+  get(path: string): Primitive;
+  update(path: string, fn: Function): void;
+  subscribe(path, callback: Callback): Function;
 };
 
 export type StoreConfig = {
-  onEvent?: (event: SEvent, path: string, value?: Primitive) => void;
+  persist?: boolean;
+  onUpdate?(path: string, value?: Primitive): void;
 };

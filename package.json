@@ -1,6 +1,6 @@
 {
   "name": "pubbel",
-  "version": "3.0.3",
+  "version": "4.0.0",
   "description": "lightweight dependency free event-driven JavaScript components",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -32,17 +32,6 @@
     "url": "https://github.com/kevtiq/pubbel/issues"
   },
   "homepage": "https://github.com/kevtiq/pubbel#readme",
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "lint-staged": {
-    "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
-      "prettier --single-quote --write",
-      "git add"
-    ]
-  },
   "devDependencies": {
     "@types/jest": "^24.9.1",
     "@typescript-eslint/eslint-plugin": "^2.8.0",

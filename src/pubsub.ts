@@ -8,25 +8,10 @@ function uuid(): string {
 export default function pubsub(config?: PubSubConfig): PubSub {
   const _list = new Map<string, Subscription[]>();
 
-  // Parsing window events function
-  function parseWindowEvent({ key, newValue }): void {
-    if (key !== 'pubbel-event' || !newValue) return;
-    const { message, args } = JSON.parse(newValue);
-    _list.get(message)?.forEach((sub): void => sub.callback(...(args || [])));
-  }
-
-  // Register window event listener when sync between browser tabs is enabled
-  if (config?.enableBrowserTabSync)
-    window.addEventListener('storage', parseWindowEvent);
-
   return {
     // publish a message onto the pubsub with optional additional parameters
     publish(message, ...args): void {
-      _list.get(message)?.forEach((sub): void => sub.callback?.(...args));
-      if (config?.enableBrowserTabSync) {
-        localStorage.setItem('pubbel-event', JSON.stringify({ message, args }));
-        localStorage.removeItem('pubbel-event');
-      }
+      _list.get(message)?.forEach((sub): void => sub.callback(...args));
       if (config?.onPublish) config.onPublish(message);
     },
     // Subscribe a callback to a message, that also can be removed

@@ -1,63 +1,66 @@
 import { QState, Queue, QueueConfig, Primitive } from './types';
 
-const initialState: QState = {
-  running: 0,
-  pending: 0,
-  resolved: 0,
-  rejected: 0
-};
+type Event = 'start' | 'resolve' | 'schedule';
 
-type Event = 'start' | 'reject' | 'resolve' | 'schedule';
+// Reducer used to update the internal state
 export function reduce(state: QState, action: Event): QState {
-  const { running, pending, resolved, rejected } = state;
+  let { running, pending } = state;
+
   switch (action) {
     case 'schedule':
-      return { ...state, pending: pending + 1 };
+      pending++;
+      break;
     case 'start':
-      return { ...state, running: running + 1, pending: pending - 1 };
+      running++;
+      pending--;
+      break;
     case 'resolve':
-      return { ...state, running: running - 1, resolved: resolved + 1 };
-    case 'reject':
-      return { ...state, running: running - 1, rejected: rejected + 1 };
+      running--;
+      break;
   }
+
+  return { running, pending, active: state.active };
 }
 
 export default function queue(config: QueueConfig): Queue {
   const _jobs: Function[] = [];
-  let _active = true;
-  let _state: QState = initialState;
+  let _state: QState = { running: 0, pending: 0, active: config.instant };
 
   function startJob(): Promise<void> | undefined {
-    if (!_active || _jobs.length === 0 || _state.running >= config.concurrent)
+    if (
+      !_state.active ||
+      _jobs.length === 0 ||
+      _state.running >= config.concurrent
+    )
       return;
 
     const fn = _jobs.shift() as Function;
     _state = reduce(_state, 'start');
+    // actually running the function/ promise
     fn()
-      .then((r: Primitive) => {
+      .then((r: Primitive) => r)
+      .catch((e: Error) => e)
+      .finally((v: Primitive) => {
         _state = reduce(_state, 'resolve');
-        config.onEvent?.(r, _state, 'resolve');
-      })
-      .catch((e: Error) => {
-        _state = reduce(_state, 'reject');
-        config.onEvent?.(e, _state, 'reject');
-      })
-      .finally(() => startJob());
+        config.onResolve?.(v, _state);
+        startJob();
+      });
   }
 
   return {
     push(fn): void {
-      _active = true;
       _jobs.push(fn);
       _state = reduce(_state, 'schedule');
+      // start new amount of jobs that are allowed
       const amount = config.concurrent - _state.running;
       for (let i = 0; i < amount; i++) startJob();
     },
-    reset(): void {
-      _state = initialState;
-    },
     stop(): void {
-      _active = false;
+      _state.active = false;
+    },
+    start(): void {
+      _state.active = true;
+      startJob();
     },
     get status(): QState {
       return _state;

@@ -1,64 +1,42 @@
 import pubbel from '../src/pubsub';
 
-const testFn = jest.fn((x) => x);
-const asyncTestFn = jest.fn().mockResolvedValue('default');
+let fn;
 
-describe('default pubbel', () => {
+describe('Pub/sub', () => {
   let pubsub;
   beforeEach(() => {
     pubsub = pubbel();
-    pubsub.subscribe('test-event', testFn);
-    pubsub.subscribe('test-event', testFn);
+    fn = jest.fn((x) => x);
+    pubsub.subscribe('success', fn);
+    pubsub.subscribe('success', fn);
   });
 
   afterEach(() => {
-    pubsub.delete('test-event');
+    pubsub.delete('success');
   });
 
-  it('not called', () => {
-    pubsub.publish('not-event');
-    expect(testFn.mock.calls.length).toBe(0);
+  it('Standard events', () => {
+    pubsub.publish('failed');
+    pubsub.publish('success');
+    expect(fn.mock.calls.length).toBe(2);
   });
 
-  it('called', () => {
-    pubsub.publish('test-event');
-    expect(testFn.mock.calls.length).toBe(2);
-  });
-
-  it('faulty subscribe', () => {
-    pubsub.subscribe('test-event');
-    pubsub.publish('test-event');
-    expect(testFn.mock.calls.length).toBe(4);
-  });
-
-  it('Another subscribe & unsubscribe', () => {
-    const remove = pubsub.subscribe('test-event', testFn);
-    pubsub.publish('test-event', 'test');
-    expect(testFn.mock.calls.length).toBe(7);
+  it('subscribe & remove before publish', () => {
+    const remove = pubsub.subscribe('success-2', fn);
     remove();
-    pubsub.publish('test-event', 'test');
-    expect(testFn.mock.calls.length).toBe(9);
-  });
-
-  it('remove topic', () => {
-    const remove = pubsub.subscribe('test-event2', testFn);
+    pubsub.publish('success-2', 'test');
+    pubsub.subscribe('success-2', fn);
+    pubsub.delete('success-2');
     remove();
-    pubsub.publish('test-event2', 'test');
-    expect(testFn.mock.calls.length).toBe(9);
-  });
-
-  it('remove topic while not existing', () => {
-    const remove = pubsub.subscribe('test-event2', testFn);
-    pubsub.delete('test-event2');
-    remove();
-    pubsub.publish('test-event2', 'test');
-    expect(testFn.mock.calls.length).toBe(9);
+    pubsub.publish('success-2', 'test');
+    expect(fn.mock.calls.length).toBe(0);
   });
 
   it('async cb', () => {
-    pubsub.subscribe('test-event', asyncTestFn);
-    pubsub.publish('test-event', 'test');
-    expect(asyncTestFn.mock.calls.length).toBe(1);
+    const asyncFn = jest.fn().mockResolvedValue('default');
+    pubsub.subscribe('success', asyncFn);
+    pubsub.publish('success', 'test');
+    expect(asyncFn.mock.calls.length).toBe(1);
   });
 });
 
@@ -67,54 +45,4 @@ it('pubbel with onPublish', () => {
   const pubsub = pubbel({ onPublish: onpublishFn });
   pubsub.publish('test');
   expect(onpublishFn.mock.calls.length).toBe(1);
-});
-
-describe('sync between tabs', () => {
-  const pubsub = pubbel({ enableBrowserTabSync: true });
-  pubsub.subscribe('sync-event', testFn);
-
-  it('simple sync', () => {
-    const message1 = JSON.stringify({ message: 'sync-event' });
-    const message2 = JSON.stringify({ message: 'sync-event-2' });
-
-    window.dispatchEvent(
-      new StorageEvent('storage', {
-        key: 'pubbel-event',
-        newValue: message1
-      })
-    );
-    expect(testFn.mock.calls.length).toBe(12);
-
-    window.dispatchEvent(
-      new StorageEvent('storage', {
-        key: 'pubbel-event',
-        newValue: message2
-      })
-    );
-    expect(testFn.mock.calls.length).toBe(12);
-
-    window.dispatchEvent(
-      new StorageEvent('storage', {
-        key: 'pubbel-event'
-      })
-    );
-    expect(testFn.mock.calls.length).toBe(12);
-
-    window.dispatchEvent(new StorageEvent('storage', {}));
-    expect(testFn.mock.calls.length).toBe(12);
-  });
-
-  it('sync with data', () => {
-    window.dispatchEvent(
-      new StorageEvent('storage', {
-        key: 'pubbel-event',
-        newValue: JSON.stringify({ message: 'sync-event', args: ['value'] })
-      })
-    );
-    expect(testFn.mock.calls.length).toBe(13);
-  });
-
-  it('send over to other browsers', () => {
-    pubsub.publish('sync-event');
-  });
 });

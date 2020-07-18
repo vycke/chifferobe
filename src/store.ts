@@ -1,22 +1,9 @@
-import { Primitive, Store, StoreConfig, SEvent } from './types';
+import pubsub from './pubsub';
+import { Primitive, Store, StoreConfig } from './types';
 
-// deep freeze of objects
-function freeze<T extends object>(obj: T): T {
-  Object.freeze(obj);
-  Object.getOwnPropertyNames(obj).forEach(
-    (prop) => !Object.isFrozen(obj[prop]) && freeze<object>(obj[prop])
-  );
-
-  return obj;
-}
-
-// object deep cloning
-function clone(obj: object): object {
-  return JSON.parse(JSON.stringify(obj));
-}
-
-export default function store(init = {}, config?: StoreConfig): Store {
-  let _state = freeze(init);
+export default function store(init: object, config?: StoreConfig): Store {
+  const _state = init;
+  const _pubsub = pubsub();
 
   // Gets the nested value based on a tokenized string indicating the path of the
   // object.(e.g. get(obj, "user.info.address"))
@@ -32,35 +19,21 @@ export default function store(init = {}, config?: StoreConfig): Store {
 
   // Sets the nested value based on tokenized string indicating the path of the
   // object. (e.g. set(obj, "user.info.address", "myValue")
-  function set(event: SEvent, path: string, value?: Primitive): void {
-    if (path === '') return;
+  function update(path: string, fn: Function): void {
+    const value = fn(get(path));
     const oldValue = get(path);
     if (oldValue === value || Object.is(oldValue, value)) return;
     const tokens = path.split('.');
 
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const state = clone(_state);
     tokens.reduce((o, k, i) => {
       if (i === tokens.length - 1) o[k] = value;
       else o[k] = o[k] || {};
       return o[k];
-    }, state);
+    }, _state);
 
-    _state = freeze(state);
-    config?.onEvent?.(event, path, value);
+    _pubsub.publish(path, value as Primitive);
+    config?.onUpdate?.(path, value);
   }
 
-  return {
-    get,
-    set(path, value): void {
-      set('set', path, value);
-    },
-    update(path, fn): void {
-      const value = get(path);
-      set('update', path, fn(value));
-    },
-    remove(path): void {
-      set('remove', path);
-    }
-  };
+  return { get, update, subscribe: _pubsub.subscribe };
 }

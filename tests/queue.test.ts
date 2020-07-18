@@ -1,4 +1,4 @@
-import jobbel from '../src/queue';
+import queue from '../src/queue';
 
 const mock = jest.fn().mockResolvedValue('default');
 const error = jest.fn().mockRejectedValue('default');
@@ -8,111 +8,79 @@ function wait(delay = 0): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, delay));
 }
 
-describe('Jobbel tests', () => {
-  it('simple execution of a queue of jobs', async () => {
-    const manager = jobbel({
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+const success = (delay = 0) => async () => {
+  await wait(delay);
+  await mock();
+};
+
+describe('Async Queue', () => {
+  it('standard instant async queue', async () => {
+    const manager = queue({
       concurrent: 2,
-      onEvent: callback
+      instant: true,
+      onResolve: callback
     });
 
     for (let i = 0; i < 10; i++) {
       if (i === 7) manager.push(error);
-      else if (i === 4)
-        manager.push(async () => {
-          await wait(100);
-          await mock();
-        });
-      else
-        manager.push(async () => {
-          await wait(10);
-          await mock();
-        });
+      else if (i === 4) manager.push(success(100));
+      else manager.push(success(10));
     }
 
     expect(callback.mock.calls.length).toBe(0);
-    expect(manager.status).toEqual({
-      pending: 8,
-      resolved: 0,
-      rejected: 0,
-      running: 2
-    });
+    expect(manager.status.pending).toBe(8);
+    expect(manager.status.running).toBe(2);
+
     await wait(10);
     expect(callback.mock.calls.length).toBe(2);
-    expect(manager.status).toEqual({
-      pending: 6,
-      resolved: 2,
-      rejected: 0,
-      running: 2
-    });
+    expect(manager.status.pending).toBe(6);
+
     await wait(10);
     expect(callback.mock.calls.length).toBe(4);
-    expect(manager.status).toEqual({
-      pending: 4,
-      resolved: 4,
-      rejected: 0,
-      running: 2
-    });
+    expect(manager.status.pending).toBe(4);
+
     await wait(10);
     expect(callback.mock.calls.length).toBe(5);
-    expect(manager.status).toEqual({
-      pending: 3,
-      resolved: 5,
-      rejected: 0,
-      running: 2
-    });
+    expect(manager.status.pending).toBe(3);
+
     await wait(10);
     expect(callback.mock.calls.length).toBe(7);
-    expect(manager.status).toEqual({
-      pending: 1,
-      resolved: 6,
-      rejected: 1,
-      running: 2
-    });
+    expect(manager.status.pending).toBe(1);
+
     await wait(30);
     expect(callback.mock.calls.length).toBe(9);
-    expect(manager.status).toEqual({
-      pending: 0,
-      resolved: 8,
-      rejected: 1,
-      running: 1
-    });
+    expect(manager.status.running).toBe(1);
+
     await wait(50);
     expect(callback.mock.calls.length).toBe(10);
-    expect(manager.status).toEqual({
-      pending: 0,
-      resolved: 9,
-      rejected: 1,
-      running: 0
-    });
-
-    manager.reset();
-    expect(manager.status).toEqual({
-      pending: 0,
-      resolved: 0,
-      rejected: 0,
-      running: 0
-    });
+    expect(manager.status.pending).toBe(0);
+    expect(manager.status.running).toBe(0);
   });
 
-  it('simple execution with callbacks', async () => {
-    const manager = jobbel({ concurrent: 2 });
-    for (let i = 0; i < 10; i++) {
-      if (i === 7) manager.push(error);
-      else manager.push(mock);
-    }
-
-    expect(manager.status).toEqual({
-      pending: 8,
-      resolved: 0,
-      rejected: 0,
-      running: 2
-    });
+  it('Simple execution with onEvent', async () => {
+    const manager = queue({ concurrent: 2, instant: true });
+    manager.push(mock);
+    manager.push(error);
     await wait();
-    expect(manager.status).toEqual({
-      pending: 0,
-      resolved: 9,
-      rejected: 1,
-      running: 0
-    });
+    expect(manager.status.pending).toBe(0);
+    expect(manager.status.running).toBe(0);
+  });
+
+  it('Start & stop', async () => {
+    const manager = queue({ concurrent: 2, instant: false });
+    for (let i = 0; i < 10; i++) manager.push(success(10));
+
+    await wait(30);
+    expect(manager.status.pending).toBe(10);
+    manager.start();
+    await wait(30);
+    manager.stop();
+    await wait(30);
+    expect(manager.status.pending).toBe(7);
+    manager.start();
+    await wait(300);
+    expect(manager.status.pending).toBe(0);
+    expect(manager.status.running).toBe(0);
   });
 });
