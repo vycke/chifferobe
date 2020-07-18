@@ -12,7 +12,7 @@ Pubbel is a light-weight JavaScript library around event-driven elements that ca
 
 A pubsub can be created by using the `pubsub` function. I has an optional configuration object as input.
 
-- **`onPublish(message: string): void`**: a callback function that is invoked on every published message. It can, for instance, be used to log every message.
+- `onPublish(message: string): void`: a callback function that is invoked on every published message. It can, for instance, be used to log every message.
 
 ```js
 import { pubsub } from 'pubbel';
@@ -39,7 +39,7 @@ myPubsub.delete('message-1');
 
 The broadcast `channel` can be used to synhronize data between browser tabs of running web applications. Synchronization is done via the `localStorage` (due to browser support). However, no data persists in the `localStorage`. As input, it requires a `name` and an optional configuration object. The available functions are the same as for the pub/sub.
 
-- **`onPublish(message: string): void`**: a callback function that is invoked on every published message. It can, for instance, be used to log every message.
+- `onPublish(message: string): void`: a callback function that is invoked on every published message. It can, for instance, be used to log every message.
 
 ```js
 import { channel } from 'pubbel';
@@ -53,13 +53,13 @@ myChannel.publish('message-1', data);
 
 The store can be created by importing the `store` function. It provides the possibility to set an initial state, and add some optional configurations. In the configuration, you have the ability to set:
 
-- **`onUpdate(path, value, event): void`**: a callback that is triggered on each event in the data storage. Can, for instance, be used for logging all events.
+- `onUpdate(path, value, event): void`: a callback that is triggered on each event in the data storage. Can, for instance, be used for logging all events.
 
 After creation, there are several actions you can perform with the store.
 
-- **`get(path: string, def?: any)`**: gives back the value for a given path in the store.
-- **`update(path: string, fn: Function)`**: uses a function to mutate the original value in the store, for a given path (e.g. `store.update('counter', (c) => c + 1)`).
-- **`subscribe(path, cb: Function)`**: creates a subscription similar to the pub/sub subscription.
+- `get(path: string, def?: any)`: gives back the value for a given path in the store.
+- `update(path: string, fn: Function)`: uses a function to mutate the original value in the store, for a given path (e.g. `store.update('counter', (c) => c + 1)`).
+- `subscribe(path, cb: Function)`: creates a subscription similar to the pub/sub subscription.
 
 ```js
 import { store } from 'pubbel';
@@ -124,8 +124,4 @@ manager.start();
 manager.stop();
 ```
 
-In the `onResolve` callback function, the second parameter shows the current state of the job manager. It holds the following properties:
-
-- `pending`: the amount of jobs waiting to be executed;
-- `running`: the amount of currently running jobs;
-- `active`: if the queue is in active or waiting state;
+In the `onResolve` callback function, the second parameter shows the current state of the job manager. It holds the amount of pending and running jobs, and if the queue is in an active state or not.
