@@ -1,8 +1,8 @@
 import pubsub from './pubsub';
 import { Primitive, Store, StoreConfig } from './types';
 
-export default function store(config?: StoreConfig): Store {
-  const _state = {};
+export default function store(init: object, config?: StoreConfig): Store {
+  const _state = init;
   const _pubsub = pubsub();
 
   // Gets the nested value based on a tokenized string indicating the path of the
@@ -19,7 +19,8 @@ export default function store(config?: StoreConfig): Store {
 
   // Sets the nested value based on tokenized string indicating the path of the
   // object. (e.g. set(obj, "user.info.address", "myValue")
-  function set(path: string, value?: Primitive): void {
+  function update(path: string, fn: Function): void {
+    const value = fn(get(path));
     const oldValue = get(path);
     if (oldValue === value || Object.is(oldValue, value)) return;
     const tokens = path.split('.');
@@ -34,12 +35,5 @@ export default function store(config?: StoreConfig): Store {
     config?.onUpdate?.(path, value);
   }
 
-  return {
-    get,
-    update(path, arg): void {
-      if (typeof arg === 'function') set(path, arg(get(path)));
-      else set(path, arg);
-    },
-    subscribe: _pubsub.subscribe
-  };
+  return { get, update, subscribe: _pubsub.subscribe };
 }

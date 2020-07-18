@@ -10,10 +10,10 @@ export type Channel = {
   publish: PublishFn;
   delete(message: string): void;
 };
+export type PubSub = Channel;
 
 export type ChannelConfig = { onPublish?: PublishFn };
 export type PubSubConfig = ChannelConfig;
-export type PubSub = Channel;
 
 export type Subscription = {
   id: string;
@@ -24,6 +24,7 @@ export type Subscription = {
 export type QState = {
   pending: number;
   running: number;
+  active: boolean;
 };
 
 export type Queue = {
@@ -35,14 +36,14 @@ export type Queue = {
 
 export type QueueConfig = {
   concurrent: number;
-  instant?: boolean;
+  instant: boolean;
   onResolve?(v: Primitive, status: QState): void;
 };
 
 // Event store types
 export type Store = {
   get(path: string): Primitive;
-  update(path: string, arg: Primitive | Function): void;
+  update(path: string, fn: Function): void;
   subscribe(path, callback: Callback): Function;
 };
 

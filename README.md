@@ -6,11 +6,13 @@
 [![Minified size](https://img.shields.io/bundlephobia/min/pubbel?label=minified)](https://www.npmjs.com/package/pubbel)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Pubbel is a light-weight JavaScript library around event-driven components. It includes a [publish-subscribe](https://en.wikipedia.org/wiki/Publish%E2%80%93subscribe_pattern) implemementation for asynchronous communication between for instance UI components, an event-driven data storage with a decoupled state interface that can be used for state-management, and an asynchronous queue that emits events.
+Pubbel is a light-weight JavaScript library around event-driven elements that can be used in front-end applications. It offers different usages for a [publish-subscribe](https://en.wikipedia.org/wiki/Publish%E2%80%93subscribe_pattern) implemementation (e.g. browser tab synchronization), an event-driven data storage with a decoupled state interface that can be used for state-management, and an asynchronous queue that emits events.
 
 ## Pub/Sub
 
-A pubsub can be created by using the `pubsub` function. Optionally, you can turn on syncing between browser windows by adding a configuration `object` as a parameter to the `pubsub` function.
+A pubsub can be created by using the `pubsub` function. I has an optional configuration object as input.
+
+- **`onPublish(message: string): void`**: a callback function that is invoked on every published message. It can, for instance, be used to log every message.
 
 ```js
 import { pubsub } from 'pubbel';
@@ -22,37 +24,42 @@ You subscribe to a topic by using the `subscribe(message: String, callback: Func
 
 ```js
 function myFunction(...args) { ... }
-const removeSubscription = myPubsub.subscribe('message-1', myCallback);
-removeSubscription();
+const remove = myPubsub.subscribe('message-1', myCallback);
+remove();
 ```
 
 Publishing a message on your `pubsub` can be done by using the `publish(message, ...args)` function. Removing a topic completely from the pubsub can be done with the `delete(message)` function.
 
 ```js
-myPubsub.publish('message-1');
 myPubsub.publish('message-2', data);
 myPubsub.delete('message-1');
 ```
 
 ## Broadcast channel
 
-The broadcast `channel` can be used to synhronize data between browser tabs of running web applications. Synchronization is done via the `localStorage` (due to browser support), but no data persists in the storage.
+The broadcast `channel` can be used to synhronize data between browser tabs of running web applications. Synchronization is done via the `localStorage` (due to browser support). However, no data persists in the `localStorage`. As input, it requires a `name` and an optional configuration object. The available functions are the same as for the pub/sub.
+
+- **`onPublish(message: string): void`**: a callback function that is invoked on every published message. It can, for instance, be used to log every message.
 
 ```js
 import { channel } from 'pubbel';
 
 const myChannel = channel('my-channel', { onPublish?: (message) => myFn(message) });
-const removeSubscription = myChannel.subscribe('message-1', myCallback);
-removeSubscription();
+myChannel.subscribe('message-1', myCallback);
 myChannel.publish('message-1', data);
-myChannel.delete('message-1');
 ```
 
 ## Event-driven store
 
-The store can be created by importing the `default` value of the `stateq` package. It provides the possibility to set an initial state, and add some optional configurations. In the configuration, you have the ability to set:
+The store can be created by importing the `store` function. It provides the possibility to set an initial state, and add some optional configurations. In the configuration, you have the ability to set:
 
-- **`onEvent: (path, value, event) => void`**: a callback that is triggered on each event in the data storage.
+- **`onUpdate(path, value, event): void`**: a callback that is triggered on each event in the data storage. Can, for instance, be used for logging all events.
+
+After creation, there are several actions you can perform with the store.
+
+- **`get(path: string, def?: any)`**: gives back the value for a given path in the store.
+- **`update(path: string, fn: Function)`**: uses a function to mutate the original value in the store, for a given path (e.g. `store.update('counter', (c) => c + 1)`).
+- **`subscribe(path, cb: Function)`**: creates a subscription similar to the pub/sub subscription.
 
 ```js
 import { store } from 'pubbel';
@@ -63,52 +70,20 @@ const config = {
 };
 
 const myStore = store(initialState, config);
-```
-
-### Store events
-
-In total there are five different events that can be triggered on the data storage in stateq.
-
-- **`get(path: string, def?: any)`**: gives back the value for a given path in the store;
-- **`set(path: string, value: any)`**: sets the value for a given path in the store;
-- **`update(path: string, fn: Function)`**: uses a function to mutate the original value in the store, for a given path (e.g. `store.update('counter', (c) => c + 1)`);
-- **`remove(path: string)`**: removes a value for a given path in the store;
-
-You can also chain the events together in a transaction. The code below does invoke the `onEvent` in the configuration once for each event in the transaction.
-
-```js
-// transaction example
-import store from './store';
-
-const { update, set } = store;
-
-function transaction() {
-  set('my.nested.object', 'value 1');
-  update('my.other.nested.object', 'value 2');
-  if (store.get('counter') > 10) set('counter', 0);
-}
-transaction();
+store.update('key', () => 'value');
+store.get('key');
 ```
 
 ### Using the storage in React components
 
-When combined with an observable or something like a [pubsub](https://github.com/kevtiq/pubbel), it can easily be used to as a React Hook. First, the store and pubsub need to be configured.
-
-```js
-// store.js
-import { pubbel, store } from 'pubbel';
-
-export const pubsub = pubbel();
-const config = { onEvent: (p, v) => pubsub.publish(p, v) };
-export const store = stateq({}, config);
-```
-
-With the store and pubsub configured, a custom hook can be created.
+You can use the store in combination with React to rerender components. It can easily be used to as a React Hook.
 
 ```js
 // useStoreValue.js hook
 import { useState, useRef } from 'react';
-import { store, pubsub } from './store';
+import { store } from 'pubbel';
+
+const state = store({ count: 0 });
 
 export default function useStoreValue(path, def) {
   // function to force rerender
@@ -117,12 +92,12 @@ export default function useStoreValue(path, def) {
 
   // subscription to the pubsub events for the store
   useEffect(() => {
-    const removeSubscription = pubsub.subscribe(path, (v) => {
+    const remove = store.subscribe(path, (v) => {
       value.current = v;
       rerender();
     });
     // remove subscription
-    return () => removeSubscription();
+    return () => remove();
   }, []);
 
   return value.current;
@@ -134,25 +109,23 @@ export default function useStoreValue(path, def) {
 The API of the asynchronous queu allows for three different parameters:
 
 - `concurrent: number`: the number of concurrent async jobs that can run simultaneously;
-- `onEvent?: (result, status, resolve | reject)`: a function that is triggered in resolving or rejecting each job. The result of the job and the (new) status of jobbel are given as parameters;
+- `instant: boolean`: if the the queue should process the request instantly when pushed (if not manually stopped in between);
+- `onResolve?: (result, status)`: a function that is triggered after each job. The result of the job and the (new) status of jobbel are given as parameters;
 
 ```js
 import { queue } from 'pubbel';
 
-function event(result, state, type) { ... }
-const manager = queue({ concurrent: 3, onEvent: resolve });
+function resolve(result, state) { ... }
+const manager = queue({ concurrent: 3, instant: false, onResolve: resolve });
 
 // .push requires (async) functions as input
 manager.push(myAPICall);
-
-...
-
-console.log(manager.status); // { pending: 0, resolved: x, rejected: y }
+manager.start();
+manager.stop();
 ```
 
-In the `resolve` and `reject` callback functions, the second parameter shows the current state of the job manager. It holds the following properties:
+In the `onResolve` callback function, the second parameter shows the current state of the job manager. It holds the following properties:
 
 - `pending`: the amount of jobs waiting to be executed;
-- `resolved`: the amount of jobs successfully finished;
-- `rejected`: the amount of jobs failed;
 - `running`: the amount of currently running jobs;
+- `active`: if the queue is in active or waiting state;
