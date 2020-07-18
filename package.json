@@ -11,9 +11,13 @@
     "test": "jest",
     "clean": "rm -rf lib dist es tsconfig.tsbuildinfo",
     "test:watch": "npm test -- --watchAll --coverage",
-    "build": "npm run clean && tsc && tsc -b ./tsconfig.json && npm run bundlesize",
+    "build": "npm run clean && tsc && tsc -b ./tsconfig.json",
     "prepublish": "npm run build",
-    "bundlesize": "bundlesize --config bundlesize.config.json"
+    "bundlesize": "bundlesize --config bundlesize.config.json",
+    "prettier": "prettier --ignore-path .gitignore \"**/*.+(js|json|ts|tsx)\"",
+    "format": "npm run prettier -- --list-different",
+    "lint": "eslint --ignore-path .gitignore .",
+    "validate": "npm-run-all --parallel format lint test build && npm run bundlesize"
   },
   "repository": {
     "type": "git",
@@ -44,6 +48,7 @@
     "jest": "^26.0.1",
     "jest-localstorage-mock": "^2.4.0",
     "lint-staged": "^9.4.3",
+    "npm-run-all": "^4.1.5",
     "prettier": "^1.19.1",
     "ts-jest": "^26.0.0",
     "typescript": "^3.9.3"
