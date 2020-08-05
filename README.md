@@ -53,7 +53,7 @@ myChannel.publish('message-1', data);
 
 The store can be created by importing the `store` function. It provides the possibility to set an initial state, and add some optional configurations. In the configuration, you have the ability to set:
 
-- `onUpdate(path, value, event): void`: a callback that is triggered on each event in the data storage. Can, for instance, be used for logging all events.
+- `onUpdate(path, value): void`: a callback that is triggered on each update event in the data storage.
 
 After creation, there are several actions you can perform with the store.
 
@@ -66,7 +66,7 @@ import { store } from 'pubbel';
 
 const initialState = { counter: 1 };
 const config = {
-  onEvent: (path, value, type) => console.log(path, value, type)
+  onUpdate: (path, value) => console.log(path, value)
 };
 
 const myStore = store(initialState, config);
