@@ -1,24 +1,19 @@
 // Generic types
 export type Primitive = boolean | number | string | object | symbol;
 
-type Callback = (...args: Primitive[]) => void;
-type PublishFn = (message: string, ...args: Primitive[]) => void;
-
-// Pub/Sub types
-export type Channel = {
-  subscribe(message: string, callback: Callback): Function;
-  publish: PublishFn;
-  delete(message: string): void;
+export type Listener = {
+  fn: Function;
+  once: boolean;
 };
-export type PubSub = Channel;
 
-export type ChannelConfig = { onPublish?: PublishFn };
-export type PubSubConfig = ChannelConfig;
-
-export type Subscription = {
-  id: string;
-  callback: Callback;
+// Emitter
+export type Emitter = {
+  on(topic: string, callback: Function, once?: boolean): void;
+  off(topic: string, callback: Function): void;
+  emit(topic: string, ...args: Primitive[]): void;
 };
+
+export type Channel = Emitter;
 
 // Async queue types
 export type QState = {
@@ -44,7 +39,8 @@ export type QueueConfig = {
 export type Store = {
   get(path: string): Primitive;
   update(path: string, fn: Function): void;
-  subscribe(path, callback: Callback): Function;
+  on(path: string, callback: Function, once?: boolean): void;
+  off(path: string, callback: Function): void;
 };
 
 export type StoreConfig = {

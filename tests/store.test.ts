@@ -35,10 +35,10 @@ describe('Decoupled store', () => {
     expect(mock).toBeCalledTimes(0);
     store.update('key', () => 'value');
     expect(mock).toBeCalledTimes(1);
-    const remove = store.subscribe('key', mock);
+    store.on('key', mock);
     store.update('key', () => 'value 1');
     expect(mock).toBeCalledTimes(3);
-    remove();
+    store.off('key', mock);
     store.update('key', () => 'value 1');
     expect(mock).toBeCalledTimes(3);
   });

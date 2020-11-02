@@ -1,19 +1,15 @@
 {
-  "exclude": ["tests", "dist", "lib", "es", "node_modules"],
+  "include": ["src"],
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
     "composite": true,
     "target": "es5",
     "lib": ["es6", "dom"],
     "declaration": true,
-    "declarationMap": true,
     "moduleResolution": "node",
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "strictNullChecks": true,
-    "downlevelIteration": true,
-    "experimentalDecorators": true,
-    "strictPropertyInitialization": true,
     "outDir": "dist",
     "rootDir": "src",
     "removeComments": true

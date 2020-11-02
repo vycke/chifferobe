@@ -7,7 +7,7 @@ const failed = 'failed';
 
 describe('Browser channel', () => {
   const ch = channel(channelName);
-  ch.subscribe(success, fn);
+  ch.on(success, fn);
 
   it('Failed sync events', () => {
     expect(fn.mock.calls.length).toBe(0);
@@ -15,7 +15,7 @@ describe('Browser channel', () => {
     window.dispatchEvent(
       new StorageEvent('storage', {
         key: channelName,
-        newValue: JSON.stringify({ message: failed })
+        newValue: JSON.stringify({ topic: failed })
       })
     );
     expect(fn.mock.calls.length).toBe(0);
@@ -35,7 +35,7 @@ describe('Browser channel', () => {
     window.dispatchEvent(
       new StorageEvent('storage', {
         key: channelName,
-        newValue: JSON.stringify({ message: success })
+        newValue: JSON.stringify({ topic: success })
       })
     );
 
@@ -43,13 +43,13 @@ describe('Browser channel', () => {
     window.dispatchEvent(
       new StorageEvent('storage', {
         key: channelName,
-        newValue: JSON.stringify({ message: success, args: ['value'] })
+        newValue: JSON.stringify({ topic: success, args: ['value'] })
       })
     );
     expect(fn.mock.calls.length).toBe(2);
   });
 
   it('Publish event', () => {
-    ch.publish(success);
+    ch.emit(success);
   });
 });

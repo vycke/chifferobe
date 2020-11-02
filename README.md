@@ -8,45 +8,39 @@
 
 Pubbel is a light-weight JavaScript library around event-driven elements that can be used in front-end applications. It offers different usages for a [publish-subscribe](https://en.wikipedia.org/wiki/Publish%E2%80%93subscribe_pattern) implemementation (e.g. browser tab synchronization), an event-driven data storage with a decoupled state interface that can be used for state-management, and an asynchronous queue that emits events.
 
-## Pub/Sub
+## Event Emitter
 
-A pubsub can be created by using the `pubsub` function. I has an optional configuration object as input.
-
-- `onPublish(message: string): void`: a callback function that is invoked on every published message. It can, for instance, be used to log every message.
+An event emitter can be created by using the `emitter` function.
 
 ```js
-import { pubsub } from 'pubbel';
-const myPubsub = pubsub();
-const myPubsub = pubsub({ onPublish?: (message) => myFn(message) });
+import { emitter } from 'pubbel';
+const _emitter = emitter();
 ```
 
-You subscribe to a topic by using the `subscribe(message: String, callback: Function)` function. This returns a `Function`. This function can be used to remove it from pubbel. The callbacks can either be synchronous or asynchronous.
+You subscribe to a topic by using the `on(topic: string, callback: Function)` function. The callbacks can either be synchronous or asynchronous.
 
 ```js
 function myFunction(...args) { ... }
-const remove = myPubsub.subscribe('message-1', myCallback);
-remove();
+_emitter.on('message-1', myFunction);
+_emitter.off('message-1', myFunction);
 ```
 
-Publishing a message on your `pubsub` can be done by using the `publish(message, ...args)` function. Removing a topic completely from the pubsub can be done with the `delete(message)` function.
+Publishing a message on your `emitter` can be done by using the `emit(topic, ...args)` function.
 
 ```js
-myPubsub.publish('message-2', data);
-myPubsub.delete('message-1');
+_emitter.emit('message-2', data);
 ```
 
 ## Broadcast channel
 
-The broadcast `channel` can be used to synhronize data between browser tabs of running web applications. Synchronization is done via the `localStorage` (due to browser support). However, no data persists in the `localStorage`. As input, it requires a `name` and an optional configuration object. The available functions are the same as for the pub/sub.
-
-- `onPublish(message: string): void`: a callback function that is invoked on every published message. It can, for instance, be used to log every message.
+The broadcast `channel` can be used to synhronize data between browser tabs of running web applications. Synchronization is done via the `localStorage` (due to browser support). However, no data persists in the `localStorage`. As input, it requires a `name` and an optional configuration object. The available functions are the same as for the event emitter.
 
 ```js
 import { channel } from 'pubbel';
 
-const myChannel = channel('my-channel', { onPublish?: (message) => myFn(message) });
-myChannel.subscribe('message-1', myCallback);
-myChannel.publish('message-1', data);
+const myChannel = channel('my-channel');
+myChannel.on('message-1', myCallback);
+myChannel.emit('message-1', data);
 ```
 
 ## Event-driven store

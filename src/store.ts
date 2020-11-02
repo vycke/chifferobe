@@ -1,9 +1,9 @@
-import pubsub from './pubsub';
+import emitter from './emitter';
 import { Primitive, Store, StoreConfig } from './types';
 
 export default function store(init: object, config?: StoreConfig): Store {
   const _state = init;
-  const _pubsub = pubsub();
+  const _emitter = emitter();
 
   // Gets the nested value based on a tokenized string indicating the path of the
   // object.(e.g. get(obj, "user.info.address"))
@@ -31,9 +31,9 @@ export default function store(init: object, config?: StoreConfig): Store {
       return o[k];
     }, _state);
 
-    _pubsub.publish(path, value as Primitive);
+    _emitter.emit(path, value as Primitive);
     config?.onUpdate?.(path, value);
   }
 
-  return { get, update, subscribe: _pubsub.subscribe };
+  return { get, update, on: _emitter.on, off: _emitter.off };
 }
