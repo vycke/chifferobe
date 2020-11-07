@@ -34,16 +34,3 @@ export type QueueConfig = {
   instant: boolean;
   onResolve?(v: Primitive, status: QState): void;
 };
-
-// Event store types
-export type Store = {
-  get(path: string): Primitive;
-  update(path: string, fn: Function): void;
-  on(path: string, callback: Function, once?: boolean): void;
-  off(path: string, callback: Function): void;
-};
-
-export type StoreConfig = {
-  persist?: boolean;
-  onUpdate?(path: string, value?: Primitive): void;
-};
