@@ -19,7 +19,6 @@ export type Channel = Emitter;
 export type QState = {
   pending: number;
   running: number;
-  active: boolean;
 };
 
 export type Queue = {
