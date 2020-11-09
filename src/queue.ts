@@ -19,19 +19,16 @@ export function reduce(state: QState, action: Event): QState {
       break;
   }
 
-  return { running, pending, active: state.active };
+  return { running, pending };
 }
 
 export default function queue(config: QueueConfig): Queue {
   const _jobs: Function[] = [];
-  let _state: QState = { running: 0, pending: 0, active: config.instant };
+  let _active = config.instant;
+  let _state: QState = { running: 0, pending: 0 };
 
   function startJob(): Promise<void> | undefined {
-    if (
-      !_state.active ||
-      _jobs.length === 0 ||
-      _state.running >= config.concurrent
-    )
+    if (!_active || _jobs.length === 0 || _state.running >= config.concurrent)
       return;
 
     const fn = _jobs.shift() as Function;
@@ -56,10 +53,10 @@ export default function queue(config: QueueConfig): Queue {
       for (let i = 0; i < amount; i++) startJob();
     },
     stop(): void {
-      _state.active = false;
+      _active = false;
     },
     start(): void {
-      _state.active = true;
+      _active = true;
       startJob();
     },
     get status(): QState {

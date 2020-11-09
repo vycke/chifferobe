@@ -1,6 +1,5 @@
-import pubsub from './pubsub';
+import emitter from './emitter';
 import channel from './channel';
 import queue from './queue';
-import store from './store';
 
-export { pubsub, channel, queue, store };
+export { emitter, channel, queue };
