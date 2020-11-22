@@ -17,7 +17,7 @@ import { emitter } from 'pubbel';
 const _emitter = emitter();
 ```
 
-You subscribe to a topic by using the `on(topic: string, callback: Function)` function. The callbacks can either be synchronous or asynchronou (**NOTE**: topic '\*' is a wildcard topic that triggers on every emit).
+You subscribe to a topic by using the `on(topic: string, callback: Function)` function. The callbacks can either be synchronous or asynchronous (**NOTE**: topic '\*' is a wildcard topic that triggers on every emit).
 
 ```js
 function myFunction(...args) { ... }
