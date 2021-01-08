@@ -16,7 +16,8 @@ export default function emitter(): Emitter {
     emit(topic, ...args): void {
       _list.get(topic)?.forEach((cb): void => cb(...args));
       // trigger all wildcard listeners
-      if (topic !== '*') this.emit('*', ...args);
+      if (topic !== '*')
+        _list.get('*')?.forEach((cb): void => cb(topic, ...args));
     }
   };
 }
