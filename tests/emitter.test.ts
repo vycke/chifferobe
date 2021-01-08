@@ -40,14 +40,4 @@ describe('Even emitter', () => {
     _emitter.emit('*');
     expect(fn.mock.calls.length).toBe(2);
   });
-
-  it('once', () => {
-    _emitter.on('success', fn, true);
-    _emitter.on('single', fn, true);
-    expect(fn.mock.calls.length).toBe(0);
-    _emitter.emit('success');
-    expect(fn.mock.calls.length).toBe(3);
-    _emitter.emit('success');
-    expect(fn.mock.calls.length).toBe(5);
-  });
 });

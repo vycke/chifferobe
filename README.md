@@ -43,24 +43,15 @@ myChannel.on('message-1', myCallback);
 myChannel.emit('message-1', data);
 ```
 
-## Asynchronous queue
-
-The API of the asynchronous queu allows for three different parameters:
-
-- `concurrent: number`: the number of concurrent async jobs that can run simultaneously;
-- `instant: boolean`: if the the queue should process the request instantly when pushed (if not manually stopped in between);
-- `onResolve?: (result, status)`: a function that is triggered after each job. The result of the job and the (new) status of jobbel are given as parameters;
+## Store
 
 ```js
-import { queue } from 'pubbel';
+import { store } from 'pubbel';
 
-function resolve(result, state) { ... }
-const manager = queue({ concurrent: 3, instant: false, onResolve: resolve });
+const myStore = store({});
+myStore.mutate('key', 1);
+console.log(myStore.get('key')); // 1
+console.log(myStore.get('key', (v) => v * 2)); // 2
 
-// .push requires (async) functions as input
-manager.push(myAPICall);
-manager.start();
-manager.stop();
+myChannel.on('key', myCallback); // called on mutate
 ```
-
-In the `onResolve` callback function, the second parameter shows the current state of the job manager. It holds the amount of pending and running jobs, and if the queue is in an active state or not.
