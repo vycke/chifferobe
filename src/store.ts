@@ -7,6 +7,7 @@ export default function store(init: Record<string, unknown>): Store {
 
   return {
     on: _emitter.on,
+    off: _emitter.off,
     mutate(key, data): void {
       _cache[key] = data;
       _emitter.emit(key, data);
