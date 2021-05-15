@@ -16,12 +16,3 @@ export type Emitter = {
 };
 
 export type Channel = Emitter;
-
-type Query<T> = (data: unknown) => T;
-
-export type Store = {
-  on(key: string, callback: Listener): void;
-  off(key: string, callback: Listener): void;
-  mutate(key: string, data: Primitive): void;
-  get<T>(key: string, query?: Query<T>): Primitive | unknown;
-};
