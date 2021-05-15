@@ -1,6 +1,6 @@
 {
   "name": "@crinkle/pubbel",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "lightweight dependency free event-driven JavaScript components",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
