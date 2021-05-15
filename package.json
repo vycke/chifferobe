@@ -1,6 +1,6 @@
 {
   "name": "@crinkle/pubbel",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "lightweight dependency free event-driven JavaScript components",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -13,7 +13,6 @@
     "test:watch": "npm test -- --watchAll --coverage",
     "build": "npm run clean && tsc && tsc -b ./tsconfig.json",
     "prepublish": "npm run build",
-    "bundlesize": "bundlesize --config bundlesize.config.json",
     "prettier": "prettier --ignore-path .gitignore \"**/*.+(js|json|ts|tsx)\"",
     "format": "npm run prettier -- --list-different",
     "lint": "eslint --ignore-path .gitignore .",
