@@ -25,9 +25,7 @@
   "keywords": [
     "pub sub",
     "event-driven",
-    "event",
-    "storage",
-    "queue"
+    "event"
   ],
   "author": "Kevin Pennekamp <github@kevtiq.dev>",
   "license": "MIT",
