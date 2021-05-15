@@ -1,9 +1,9 @@
 {
   "include": ["src"],
   "compilerOptions": {
-    "target": "es6",
+    "lib": ["es2017", "dom"],
     "module": "commonjs",
-    "lib": ["es6", "dom"],
+    "target": "es2017",
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "moduleResolution": "node",
