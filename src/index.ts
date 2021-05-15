@@ -1,4 +1,4 @@
 import emitter from './emitter';
 import channel from './channel';
 
-export { emitter, channel, store };
+export { emitter, channel };
