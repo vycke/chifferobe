@@ -1,20 +1,20 @@
 {
   "include": ["src"],
   "compilerOptions": {
-    "lib": ["ES2019", "DOM"],
-    "module": "es2020",
-    "target": "ES2019",
-    "outDir": "dist/esm",
-    "rootDir": "src",
+    "lib": ["es6", "dom"],
+    "target": "es6",
+    "outDir": "./lib",
+    "rootDir": "./src",
     "moduleResolution": "node",
-    "esModuleInterop": true,
+    "importHelpers": true,
+    "declaration": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "allowSyntheticDefaultImports": true,
-    "composite": true,
     "strictNullChecks": true,
+    "esModuleInterop": true,
+    "strict": true,
+    "allowSyntheticDefaultImports": true,
     "allowJs": true,
-    
     "removeComments": true
   }
 }

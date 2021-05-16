@@ -5,7 +5,8 @@ export default function channel(name: string): Channel {
   const _emitter = emitter();
 
   // function used on the 'storage' event listener
-  function parseWindowEvent({ key, newValue }): void {
+  function parseWindowEvent(ev: StorageEvent): void {
+    const { key, newValue } = ev;
     if (key !== name || !newValue) return;
     const { topic, args } = JSON.parse(newValue);
     _emitter.emit(topic, ...(args || []));
@@ -19,6 +20,6 @@ export default function channel(name: string): Channel {
     emit(topic, ...args): void {
       localStorage.setItem(name, JSON.stringify({ topic, args }));
       localStorage.removeItem(name);
-    }
+    },
   };
 }
