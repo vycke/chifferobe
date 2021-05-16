@@ -3,7 +3,7 @@
 ![](https://github.com/kevtiq/pubbel/workflows/test/badge.svg)
 [![Node version](https://img.shields.io/npm/v/@crinkle/pubbel.svg?style=flat)](https://www.npmjs.com/package/@crinkle/pubbel)
 [![NPM Downloads](https://img.shields.io/npm/dm/@crinkle/pubbel.svg?style=flat)](https://www.npmjs.com/package/@crinkle/pubbel)
-[![Minified size](https://img.shields.io/bundlephobia/min/@crinkle/pubbel?label=minified)](https://www.npmjs.com/package/@crinkle/pubbel)
+[![Minified size](https://img.shields.io/bundlephobia/min/@crinkle/pubbel@latest?label=minified)](https://www.npmjs.com/package/@crinkle/pubbel)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 Pubbel is a light-weight JavaScript library around event-driven elements that can be used in front-end applications. It offers different usages for a [publish-subscribe](https://en.wikipedia.org/wiki/Publish%E2%80%93subscribe_pattern) implemementation (wrapped as an event emitter), and an asynchronous queue that emits events.
