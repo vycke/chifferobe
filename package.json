@@ -17,7 +17,7 @@
     "prettier": "prettier --ignore-path .gitignore \"**/*.+(js|json|ts|tsx)\"",
     "format": "npm run prettier -- --list-different",
     "lint": "eslint --ignore-path .gitignore .",
-    "validate": "npm-run-all --parallel lint test build"
+    "validate": "npm-run-all --parallel format lint test build"
   },
   "repository": {
     "type": "git",
@@ -35,7 +35,6 @@
   },
   "homepage": "https://github.com/kevtiq/pubbel#readme",
   "devDependencies": {
-    "@rollup/plugin-typescript": "^8.2.1",
     "@types/jest": "^26.0.23",
     "@typescript-eslint/eslint-plugin": "^4.23.0",
     "@typescript-eslint/parser": "^4.23.0",
@@ -43,10 +42,8 @@
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^3.4.0",
     "eslint-plugin-security": "^1.4.0",
-    "husky": "^6.0.0",
     "jest": "^26.6.3",
     "jest-localstorage-mock": "^2.4.12",
-    "lint-staged": "^11.0.0",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.3.0",
     "rollup": "^2.48.0",
@@ -60,15 +57,5 @@
     "hooks": {
       "pre-commit": "npm run validate && lint-staged"
     }
-  },
-  "lint-staged": {
-    "*.+(js|jsx|ts|tsx)": [
-      "eslint"
-    ],
-    "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
-      "prettier --single-quote --write",
-      "jest --findRelatedTests",
-      "git add"
-    ]
   }
 }
