@@ -3,10 +3,9 @@
   "compilerOptions": {
     "lib": ["es6", "dom"],
     "target": "es6",
-    "outDir": "./lib",
+    "outDir": "./dist",
     "rootDir": "./src",
     "moduleResolution": "node",
-    "declaration": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "strictNullChecks": true,

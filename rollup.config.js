@@ -5,9 +5,17 @@ export default [
   {
     input: 'src/index.ts',
     output: {
-      dir: 'dist',
+      dir: 'dist/esm',
       format: 'esm',
     },
     plugins: [typescript(), terser()],
+  },
+  {
+    input: 'src/index.ts',
+    output: {
+      dir: 'dist',
+      format: 'cjs',
+    },
+    plugins: [typescript({ tsconfig: 'tsconfig.cjs.json' }), terser()],
   },
 ];
