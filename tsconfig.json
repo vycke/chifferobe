@@ -1,18 +1,20 @@
 {
   "include": ["src"],
   "compilerOptions": {
-    "lib": ["es2017", "dom"],
-    "module": "commonjs",
-    "target": "es2017",
+    "lib": ["ES2019", "DOM"],
+    "module": "es2020",
+    "target": "ES2019",
+    "outDir": "dist/esm",
+    "rootDir": "src",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
     "composite": true,
     "strictNullChecks": true,
     "allowJs": true,
-    "outDir": "dist",
-    "rootDir": "src",
+    
     "removeComments": true
   }
 }

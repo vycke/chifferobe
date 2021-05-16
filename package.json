@@ -1,8 +1,9 @@
 {
   "name": "@crinkle/pubbel",
-  "version": "1.0.3",
+  "version": "1.0.5",
   "description": "lightweight dependency free event-driven JavaScript components",
   "main": "dist/index.js",
+  "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist"
@@ -11,7 +12,7 @@
     "test": "jest",
     "clean": "rm -rf lib dist es tsconfig.tsbuildinfo",
     "test:watch": "npm test -- --watchAll --coverage",
-    "build": "npm run clean && tsc && tsc -b ./tsconfig.json",
+    "build": "npm run clean && tsc && tsc -b ./tsconfig.json && tsc -b ./tsconfig.cjs.json",
     "prepublish": "npm run build",
     "prettier": "prettier --ignore-path .gitignore \"**/*.+(js|json|ts|tsx)\"",
     "format": "npm run prettier -- --list-different",
