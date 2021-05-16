@@ -1,9 +1,9 @@
 import emitter from '../src/emitter';
-
-let fn;
+import { Emitter } from '../src/types';
 
 describe('Even emitter', () => {
-  let _emitter;
+  let _emitter: Emitter;
+  let fn: jest.Mock<unknown>;
   beforeEach(() => {
     _emitter = emitter();
     fn = jest.fn((x) => x);
@@ -12,7 +12,7 @@ describe('Even emitter', () => {
   });
 
   afterEach(() => {
-    _emitter.off('success');
+    _emitter.off('success', fn);
   });
 
   it('Standard events', () => {
