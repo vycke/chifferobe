@@ -1,4 +1,2 @@
-import emitter from './emitter';
-import channel from './channel';
-
-export { emitter, channel };
+export { emitter } from './emitter';
+export { proxy } from './proxy';

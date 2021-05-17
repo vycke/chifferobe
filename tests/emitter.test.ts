@@ -1,8 +1,7 @@
-import emitter from '../src/emitter';
-import { Emitter } from '../src/types';
+import { emitter } from '../src/emitter';
 
 describe('Even emitter', () => {
-  let _emitter: Emitter;
+  let _emitter;
   let fn: jest.Mock<unknown>;
   beforeEach(() => {
     _emitter = emitter();

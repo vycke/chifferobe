@@ -1,7 +1,14 @@
-import { Listener, Emitter } from './types';
+import { P } from './types';
+
+type Listener = (...args: P[]) => void;
+type Emitter = {
+  on(topic: string, callback: Listener): void;
+  off(topic: string, callback: Listener): void;
+  emit(topic: string, ...args: P[]): void;
+};
 
 // The actual pubsub
-export default function emitter(): Emitter {
+export function emitter(): Emitter {
   const _list = new Map<string, Listener[]>();
 
   return {
@@ -18,6 +25,6 @@ export default function emitter(): Emitter {
       // trigger all wildcard listeners
       if (topic !== '*')
         _list.get('*')?.forEach((cb): void => cb(topic, ...args));
-    }
+    },
   };
 }

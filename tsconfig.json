@@ -1,7 +1,7 @@
 {
   "include": ["src"],
   "compilerOptions": {
-    "lib": ["es6", "dom"],
+    "lib": ["es6"],
     "target": "es6",
     "outDir": "./dist",
     "rootDir": "./src",
@@ -10,9 +10,7 @@
     "noUnusedParameters": true,
     "strictNullChecks": true,
     "esModuleInterop": true,
-    "strict": true,
     "allowSyntheticDefaultImports": true,
-    "allowJs": true,
     "removeComments": true
   }
 }
