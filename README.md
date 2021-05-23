@@ -75,7 +75,6 @@ import { proxy } from '@crinkle/pubbel';
 // declare a store and set the initial values
 const store = proxy(() => ({ count: 0 }));
 store.count++; // { count: 1 }
-delete store.count; // {}
 
 // you can declare listeners and use them similarly to the emitter, with the
 // .on() and .off() functions.
