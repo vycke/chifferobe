@@ -21,7 +21,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kevtiq/pubbel.git"
+    "url": "git+https://github.com/crinklesio/pubbel.git"
   },
   "keywords": [
     "pub sub",
@@ -31,9 +31,9 @@
   "author": "Kevin Pennekamp <github@kevtiq.dev>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/kevtiq/pubbel/issues"
+    "url": "https://github.com/crinklesio/pubbel/issues"
   },
-  "homepage": "https://github.com/kevtiq/pubbel#readme",
+  "homepage": "https://github.com/crinklesio/pubbel#readme",
   "devDependencies": {
     "@types/jest": "^26.0.23",
     "@typescript-eslint/eslint-plugin": "^4.23.0",

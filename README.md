@@ -1,6 +1,6 @@
 # Pubbel
 
-![](https://github.com/kevtiq/pubbel/workflows/test/badge.svg)
+![](https://github.com/crinklesio/pubbel/workflows/test/badge.svg)
 [![Node version](https://img.shields.io/npm/v/@crinkles/pubbel.svg?style=flat)](https://www.npmjs.com/package/@crinkles/pubbel)
 [![NPM Downloads](https://img.shields.io/npm/dm/@crinkles/pubbel.svg?style=flat)](https://www.npmjs.com/package/@crinkles/pubbel)
 [![Minified size](https://img.shields.io/bundlephobia/min/@crinkles/pubbel@latest?label=minified)](https://www.npmjs.com/package/@crinkles/pubbel)
