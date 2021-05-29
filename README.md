@@ -1,9 +1,9 @@
 # Pubbel
 
 ![](https://github.com/kevtiq/pubbel/workflows/test/badge.svg)
-[![Node version](https://img.shields.io/npm/v/@crinkle/pubbel.svg?style=flat)](https://www.npmjs.com/package/@crinkle/pubbel)
-[![NPM Downloads](https://img.shields.io/npm/dm/@crinkle/pubbel.svg?style=flat)](https://www.npmjs.com/package/@crinkle/pubbel)
-[![Minified size](https://img.shields.io/bundlephobia/min/@crinkle/pubbel@latest?label=minified)](https://www.npmjs.com/package/@crinkle/pubbel)
+[![Node version](https://img.shields.io/npm/v/@crinkles/pubbel.svg?style=flat)](https://www.npmjs.com/package/@crinkles/pubbel)
+[![NPM Downloads](https://img.shields.io/npm/dm/@crinkles/pubbel.svg?style=flat)](https://www.npmjs.com/package/@crinkles/pubbel)
+[![Minified size](https://img.shields.io/bundlephobia/min/@crinkles/pubbel@latest?label=minified)](https://www.npmjs.com/package/@crinkles/pubbel)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 Pubbel is a light-weight JavaScript library around event-driven elements that can be used in front-end applications. It offers different usages for a [publish-subscribe](https://en.wikipedia.org/wiki/Publish%E2%80%93subscribe_pattern) implemementation (wrapped as an event emitter), and an asynchronous queue that emits events.
@@ -13,7 +13,7 @@ Pubbel is a light-weight JavaScript library around event-driven elements that ca
 An event emitter can be created by using the `emitter` function.
 
 ```js
-import { pubbel } from '@crinkle/pubbel';
+import { pubbel } from '@crinkles/pubbel';
 const _emitter = pubbel();
 ```
 
@@ -36,7 +36,7 @@ _emitter.emit('message-2', data);
 A broadcast channel makes it possible to synhronize data between browser tabs of running web applications. See the below implementation example. Synchronization is done via the `localStorage` (due to browser support). However, no data persists in the `localStorage`. As input, it requires a `name` and an optional configuration object. The available functions are the same as for the event emitter.
 
 ```js
-import { pubbel } from '@crinkle/pubbel';
+import { pubbel } from '@crinkles/pubbel';
 
 export function channel(name) {
   const _emitter = pubbel();
@@ -71,7 +71,7 @@ The proxy store is tiny reactive atomic state management library that can be use
 - **Modular**: can be used as a single global store, or as many decoupled and distributed small stores.
 
 ```js
-import { proxy } from '@crinkle/pubbel';
+import { proxy } from '@crinkles/pubbel';
 // declare a store and set the initial values
 const store = proxy(() => ({ count: 0 }));
 store.count++; // { count: 1 }
@@ -101,7 +101,7 @@ A generic React Hook implementation that automatically rerenders if the store va
 
 ```jsx
 import { useReducer, useRef, useLayoutEffect } from 'react';
-import { proxy } from '@crinkle/storive';
+import { proxy } from '@crinkles/pubbel';
 
 // Define the store
 const store = proxy(() => ({ count: 0 }));
