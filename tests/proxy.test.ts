@@ -34,14 +34,6 @@ describe('reactive store', () => {
     expect(fn.mock.calls.length).toBe(1);
   });
 
-  test('LISTENER - update to same value should not trigger listener', () => {
-    const cache = proxy<{ count: number }>(() => ({ count: 1 }));
-    cache.on('count', fn);
-    expect(fn.mock.calls.length).toBe(0);
-    cache.count = 1;
-    expect(fn.mock.calls.length).toBe(0);
-  });
-
   test('IMMUTABILITY - direct updates not allowed', () => {
     const cache = proxy<{ count: number }>(() => ({ count: 1 }), true);
     cache.count = 2;

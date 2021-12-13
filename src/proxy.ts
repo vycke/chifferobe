@@ -30,11 +30,8 @@ export function proxy<T extends object>(
   function updater(prop: string, fn: (value: P) => P): void {
     // fixed keys that are immutable
     if (['on', 'off', 'update'].includes(prop)) return;
-    //determine if value changed
-    const prevValue = _cache[prop];
-    const value = fn(_cache[prop]);
-    if (prevValue === value) return;
 
+    const value = fn(_cache[prop]);
     _cache[prop] = value;
     _emitter.emit(prop, value);
   }
