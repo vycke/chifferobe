@@ -1,12 +1,12 @@
-# Pubbel
+# pubble
 
-![](https://github.com/crinklesio/pubbel/workflows/test/badge.svg)
-[![Node version](https://img.shields.io/npm/v/@crinkles/pubbel.svg?style=flat)](https://www.npmjs.com/package/pubbel)
-[![NPM Downloads](https://img.shields.io/npm/dm/@crinkles/pubbel.svg?style=flat)](https://www.npmjs.com/package/pubbel)
-[![Minified size](https://img.shields.io/bundlephobia/min/@crinkles/pubbel@latest?label=minified)](https://www.npmjs.com/package/pubbel)
+![](https://github.com/crinklesio/pubble/workflows/test/badge.svg)
+[![Node version](https://img.shields.io/npm/v/@crinkles/pubble.svg?style=flat)](https://www.npmjs.com/package/pubble)
+[![NPM Downloads](https://img.shields.io/npm/dm/@crinkles/pubble.svg?style=flat)](https://www.npmjs.com/package/pubble)
+[![Minified size](https://img.shields.io/bundlephobia/min/@crinkles/pubble@latest?label=minified)](https://www.npmjs.com/package/pubble)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Pubbel is a light-weight JavaScript library around an event-driven proxy state management library.
+pubble is a light-weight JavaScript library around an event-driven proxy state management library.
 
 ## Proxy store
 
@@ -18,7 +18,7 @@ The proxy store is tiny reactive atomic state management library that can be use
 - **Modular**: can be used as a single global store, or as many decoupled and distributed small stores.
 
 ```js
-import proxy from 'pubbel';
+import proxy from 'pubble';
 // declare a store and set the initial values
 const store = proxy({ count: 0 });
 store.count++; // { count: 1 }
@@ -34,7 +34,7 @@ A generic React Hook implementation that automatically rerenders if the store va
 
 ```jsx
 import { useReducer, useRef, useLayoutEffect } from 'react';
-import proxy from 'pubbel';
+import proxy from 'pubble';
 
 // Define the store
 const store = proxy({ count: 0 });
