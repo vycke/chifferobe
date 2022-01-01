@@ -1,7 +1,7 @@
 {
-  "name": "@crinkles/pubbel",
-  "version": "2.1.0",
-  "description": "lightweight dependency free event-driven JavaScript components",
+  "name": "pubbel",
+  "version": "1.0.0",
+  "description": "lightweight dependency free event-driven proxy state",
   "main": "dist/index.js",
   "module": "dist/esm/index.js",
   "types": "dist/index.d.ts",
@@ -25,10 +25,11 @@
   },
   "keywords": [
     "pub sub",
+    "proxy",
     "event-driven",
     "event"
   ],
-  "author": "Kevin Pennekamp <github@kevtiq.dev>",
+  "author": "Kevin Pennekamp <github@crinkles.io>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/crinklesio/pubbel/issues"
