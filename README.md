@@ -1,9 +1,9 @@
 # pubble
 
 ![](https://github.com/crinklesio/pubble/workflows/test/badge.svg)
-[![Node version](https://img.shields.io/npm/v/@crinkles/pubble.svg?style=flat)](https://www.npmjs.com/package/pubble)
-[![NPM Downloads](https://img.shields.io/npm/dm/@crinkles/pubble.svg?style=flat)](https://www.npmjs.com/package/pubble)
-[![Minified size](https://img.shields.io/bundlephobia/min/@crinkles/pubble@latest?label=minified)](https://www.npmjs.com/package/pubble)
+[![Node version](https://img.shields.io/npm/v/pubble.svg?style=flat)](https://www.npmjs.com/package/pubble)
+[![NPM Downloads](https://img.shields.io/npm/dm/pubble.svg?style=flat)](https://www.npmjs.com/package/pubble)
+[![Minified size](https://img.shields.io/bundlephobia/min/pubble@latest?label=minified)](https://www.npmjs.com/package/pubble)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 pubble is a light-weight JavaScript library around an event-driven proxy state management library.
