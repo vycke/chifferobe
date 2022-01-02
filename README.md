@@ -24,11 +24,11 @@ const store = proxy({ count: 0 });
 store.count++; // { count: 1 }
 
 const l = (c) => console.log('Count updated:', c);
-store.subscribe('count', l); // register listener
-store.unsubscribe('count', l); // remove listener
+const remove = store.subscribe('count', l); // register listener
+remove(); // remove listener
 ```
 
-### Generic React hooks example
+## React hooks example
 
 A generic React Hook implementation that automatically rerenders if the store value changes.
 
@@ -50,8 +50,8 @@ export function useCache(key, query) {
       rerender();
     }
 
-    store.subscribe(key, updateCachedValue);
-    return () => store.unsubscribe(key, updateCachedValue);
+    const remove = store.subscribe(key, updateCachedValue);
+    return () => remove();
   }, []); //eslint-disable-line
 
   return query ? query(value.current) : value.current;

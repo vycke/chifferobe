@@ -12,7 +12,7 @@ describe('reactive store', () => {
   test('CHANGE - subscribe property that cannot updated', () => {
     const fn = jest.fn((x) => x);
     const cache = proxy<{ count: number }>({ count: 1 });
-    cache.subscribe = (x) => x;
+    cache.subscribe = () => () => undefined;
     cache.subscribe('count', fn);
     cache.count = 2;
     expect(fn.mock.calls.length).toBe(1);
@@ -21,11 +21,11 @@ describe('reactive store', () => {
   test('LISTENER - register listener', () => {
     const fn = jest.fn((x) => x);
     const cache = proxy<{ count: number }>({ count: 1 });
-    cache.subscribe('count', fn);
+    const removeSubscription = cache.subscribe('count', fn);
     expect(fn.mock.calls.length).toBe(0);
     cache.count = 2;
     expect(fn.mock.calls.length).toBe(1);
-    cache.unsubscribe('count', fn);
+    removeSubscription();
     cache.count = 3;
     expect(fn.mock.calls.length).toBe(1);
   });
