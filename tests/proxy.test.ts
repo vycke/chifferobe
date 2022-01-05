@@ -18,6 +18,14 @@ describe('reactive store', () => {
     expect(fn.mock.calls.length).toBe(1);
   });
 
+  test('CHANGE - same value', () => {
+    const fn = jest.fn((x) => x);
+    const cache = proxy<{ count: number }>({ count: 1 });
+    cache.subscribe('count', fn);
+    cache.count = 1;
+    expect(fn.mock.calls.length).toBe(0);
+  });
+
   test('LISTENER - register listener', () => {
     const fn = jest.fn((x) => x);
     const cache = proxy<{ count: number }>({ count: 1 });

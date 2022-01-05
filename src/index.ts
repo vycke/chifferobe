@@ -43,6 +43,8 @@ export default function proxy<T extends object>(init: T): Proxy<T> {
     set(_t: object, prop: string, value): boolean {
       // fixed keys that are immutable
       if (prop === 'subscribe') return true;
+      // ensure listeners are not triggered if the values don't change
+      if (_cache[prop] === value) return true;
       _cache[prop] = value;
       _emitter.emit(prop, value);
       return true;

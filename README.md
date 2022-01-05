@@ -39,7 +39,7 @@ import proxy from 'pubble';
 // Define the store
 const store = proxy({ count: 0 });
 
-// Define the hook, with query for computed parameters
+// Define the hook
 export function useCache(key, query) {
   const [, rerender] = useReducer((c) => c + 1, 0);
   const value = useRef(store[key]);
@@ -54,7 +54,7 @@ export function useCache(key, query) {
     return () => remove();
   }, []); //eslint-disable-line
 
-  return query ? query(value.current) : value.current;
+  return value.current;
 }
 
 // Apply in a component
