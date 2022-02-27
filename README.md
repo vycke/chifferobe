@@ -6,22 +6,23 @@
 [![Minified size](https://img.shields.io/bundlephobia/min/pubble@latest?label=minified)](https://www.npmjs.com/package/pubble)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-pubble is a light-weight JavaScript library around an event-driven proxy state management library.
+pubble is a light-weight JavaScript library around an command-driven proxy state management library.
 
-## Proxy store
+## Store
 
-The proxy store is tiny reactive atomic state management library that can be used in any modern front-end frameworks (e.g. React, Vue, etc.). It is build on several core principles, and uses the `emitter` under the hood.
+The proxy store is tiny reactive atomic state management library that can be used in any modern front-end frameworks (e.g. React, Vue, etc.). It is build on several core principles.
 
-- **Event-driven**: mutations can be registered on events and are only executed when an event is dispatched.
-- **Immutable**: data can be made immutable and cannot be mutated directly, due to an access layer or state interface.
-- **Decoupled**: events can be registered anywhere (e.g. inside a component) and do not have to be registered near where the store is defined.
+- **Command-driven**: commands can be registered to te store, allowing for changes.
+- **Decoupled**: commands can be registered anywhere (e.g. inside a component) and do not have to be registered near where the store is defined.
+- **Immutable**: data can be made immutable and cannot be mutated directly. Changes can be made via commands.
 - **Modular**: can be used as a single global store, or as many decoupled and distributed small stores.
 
 ```js
-import proxy from 'pubble';
+import { store } from 'pubble';
 // declare a store and set the initial values
-const store = proxy({ count: 0 });
-store.count++; // { count: 1 }
+const myStore = store({ count: 0 });
+myStore.increment = (state) => (amount) => (state.count += amount);
+myStore.increment(2); // { count: 2 }
 
 const l = (c) => console.log('Count updated:', c);
 const remove = store.subscribe('count', l); // register listener
@@ -34,13 +35,14 @@ A generic React Hook implementation that automatically rerenders if the store va
 
 ```jsx
 import { useReducer, useRef, useLayoutEffect } from 'react';
-import proxy from 'pubble';
+import { store } from 'pubble';
 
 // Define the store
-const store = proxy({ count: 0 });
+const myStore = store({ count: 0 });
+const myStore.increment = (state) => () => state.count++;
 
 // Define the hook
-export function useCache(key, query) {
+export function useReadStore(key) {
   const [, rerender] = useReducer((c) => c + 1, 0);
   const value = useRef(store[key]);
 
@@ -60,7 +62,7 @@ export function useCache(key, query) {
 // Apply in a component
 function MyButton() {
   // here a view on the data is being used in the hook
-  const count = useCache('count', (c) => c * 2);
-  return <button onClick={() => store.count++}>{`value ${count}`}</button>;
+  const count = useReadStore('count');
+  return <button onClick={store.increment}>{`value ${count}`}</button>;
 }
 ```
