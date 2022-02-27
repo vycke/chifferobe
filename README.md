@@ -26,8 +26,6 @@ myStore.increment(2); // { count: 2 }
 
 const l = (c) => console.log('Count updated:', c);
 const remove = myStore.on('count', l); // register listener
-
-
 remove(); // remove listener
 
 // Reactive querying
