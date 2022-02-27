@@ -37,36 +37,53 @@ describe('reactive store with data access layer', () => {
     expect(cache.count).toBe(1);
   });
 
-  test('PERFORMANCE - same value', () => {
-    const fn = jest.fn((x) => x);
-    const cache = store<{ count: number }>({ count: 1 });
-    cache.subscribe('count', fn);
-    cache.update = (state: CountStore) => (p: number) => (state.count = p);
-    cache.update(1);
-    expect(fn.mock.calls.length).toBe(0);
-  });
-
-  test('LISTENER', () => {
+  test('QUERY - executing callbacks', () => {
     const fn = jest.fn((x) => x);
     const cache = store<CountStore>({ count: 1 });
     cache.increment = (state: CountStore) => () => state.count++;
-    const remove = cache.subscribe('count', fn);
+    cache.on('count', fn);
     expect(fn.mock.calls.length).toBe(0);
-    cache.increment();
-    expect(fn.mock.calls.length).toBe(1);
-    remove();
     cache.increment();
     expect(fn.mock.calls.length).toBe(1);
   });
 
-  test('LISTENER - wildcard', () => {
+  test('QUERY - function writing to separate variable', () => {
+    const cache = store<CountStore>({ count: 1 });
+    let double: number = cache.count * 2;
+    cache.increment = (state: CountStore) => () => state.count++;
+    cache.on('count', (v: number) => (double = v * 2));
+    expect(double).toBe(2);
+    cache.increment();
+    expect(double).toBe(4);
+  });
+
+  test('QUERY - remove listener', () => {
+    const fn = jest.fn((x) => x);
+    const cache = store<CountStore>({ count: 1 });
+    cache.increment = (state: CountStore) => () => state.count++;
+    const remove = cache.on('count', fn);
+    remove();
+    cache.increment();
+    expect(fn.mock.calls.length).toBe(0);
+  });
+
+  test('QUERY - entire store', () => {
     const fn = jest.fn((x) => x);
     const cache = store<{ count: number }>({ count: 1 });
     cache.increment = (state: CountStore) => () => state.count++;
-    cache.subscribe('*', fn);
+    cache.on('*', fn);
     expect(fn.mock.calls.length).toBe(0);
     cache.increment();
     expect(fn.mock.calls.length).toBe(1);
+  });
+
+  test('QUERY - same value performance improvement', () => {
+    const fn = jest.fn((x) => x);
+    const cache = store<{ count: number }>({ count: 1 });
+    cache.on('count', fn);
+    cache.update = (state: CountStore) => (p: number) => (state.count = p);
+    cache.update(1);
+    expect(fn.mock.calls.length).toBe(0);
   });
 
   test('DELETE - delete a property (not allowed)', () => {

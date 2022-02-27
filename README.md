@@ -25,8 +25,20 @@ myStore.increment = (state) => (amount) => (state.count += amount);
 myStore.increment(2); // { count: 2 }
 
 const l = (c) => console.log('Count updated:', c);
-const remove = store.subscribe('count', l); // register listener
+const remove = myStore.on('count', l); // register listener
+
+
 remove(); // remove listener
+
+// Reactive querying
+let double = myStore.count * 2;
+myStore.on('count', (c) => (double = c * 2)); // double = 2
+
+// You can register functions on a wildcard for debugging purposes
+function debugger(key, value) {
+  console.log(`${key}: ${value}`);
+}
+myStore.on('*', debugger);
 ```
 
 ## React hooks example
@@ -44,15 +56,15 @@ const myStore.increment = (state) => () => state.count++;
 // Define the hook
 export function useReadStore(key) {
   const [, rerender] = useReducer((c) => c + 1, 0);
-  const value = useRef(store[key]);
+  const value = useRef();
 
   useLayoutEffect(() => {
-    function updateCachedValue(s) {
-      value.current = s;
+    function updateCachedValue(val) {
+      value.current = val;
       rerender();
     }
 
-    const remove = store.subscribe(key, updateCachedValue);
+    const remove = myStore.on(key, updateCachedValue);
     return () => remove();
   }, []); //eslint-disable-line
 
