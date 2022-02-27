@@ -1,6 +1,6 @@
 # pubble
 
-![](https://github.com/crinklesio/pubble/workflows/test/badge.svg)
+![](https://github.com/kevtiq/pubble/workflows/test/badge.svg)
 [![Node version](https://img.shields.io/npm/v/pubble.svg?style=flat)](https://www.npmjs.com/package/pubble)
 [![NPM Downloads](https://img.shields.io/npm/dm/pubble.svg?style=flat)](https://www.npmjs.com/package/pubble)
 [![Minified size](https://img.shields.io/bundlephobia/min/pubble@latest?label=minified)](https://www.npmjs.com/package/pubble)
