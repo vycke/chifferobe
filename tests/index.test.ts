@@ -69,7 +69,7 @@ describe('reactive store with data access layer', () => {
 
   test('QUERY - entire store', () => {
     const fn = jest.fn((x) => x);
-    const cache = store<{ count: number }>({ count: 1 });
+    const cache = store<CountStore>({ count: 1 });
     cache.increment = (state: CountStore) => () => state.count++;
     cache.on('*', fn);
     expect(fn.mock.calls.length).toBe(0);
@@ -79,7 +79,7 @@ describe('reactive store with data access layer', () => {
 
   test('QUERY - same value performance improvement', () => {
     const fn = jest.fn((x) => x);
-    const cache = store<{ count: number }>({ count: 1 });
+    const cache = store<CountStore>({ count: 1 });
     cache.on('count', fn);
     cache.update = (state: CountStore) => (p: number) => (state.count = p);
     cache.update(1);
