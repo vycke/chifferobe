@@ -20,8 +20,8 @@ The proxy store is tiny reactive atomic state management library that can be use
 ```js
 import { store } from 'pubble';
 // declare a store and set the initial values
-const myStore = store({ count: 0 });
-myStore.increment = (state) => (amount) => (state.count += amount);
+const increment = (state) => (amount = 1) => (state.count += amount);
+const myStore = store({ count: 0 }, { increment });
 myStore.increment(2); // { count: 2 }
 
 const l = (c) => console.log('Count updated:', c);
@@ -48,8 +48,11 @@ import { useReducer, useRef, useLayoutEffect } from 'react';
 import { store } from 'pubble';
 
 // Define the store
-const myStore = store({ count: 0 });
-const myStore.increment = (state) => () => state.count++;
+const increment =
+  (state) =>
+  (amount = 1) =>
+    (state.count += amount);
+const myStore = store({ count: 0 }, { increment });
 
 // Define the hook
 export function useReadStore(key) {

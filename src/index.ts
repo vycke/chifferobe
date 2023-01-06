@@ -1,16 +1,17 @@
-type Listener = (...args) => void;
-type Subscription = () => void;
+export type Listener = (...args) => void;
+export type Subscription = () => void;
 type Emitter = {
   on(topic: string, callback: Listener): Subscription;
   emit(topic: string, ...args): void;
 };
-type Proxy<T> = T & {
+export type Proxy<T> = T & {
   on(key: string, listener: Listener): Subscription;
 };
 
-type Command = (payload?) => unknown;
-type ICommand<T> = (store: Proxy<T>) => Command;
+export type Command = (payload?) => unknown;
+export type ICommand<T> = (store: Proxy<T>) => Command;
 export type Store<T> = Proxy<T> & { [key: string]: Command };
+export type Commands<T> = { [key: string]: ICommand<T> };
 
 // event emitter used internally in the proxy
 function emitter(): Emitter {
@@ -34,7 +35,7 @@ function emitter(): Emitter {
 }
 
 // Function to create proxy around the state, to allow changes to be
-// emitted on changes for each key. Ensures a commond can change more
+// emitted on changes for each key. Ensures a command can change more
 // than 1 key.
 function proxy<T extends object>(init: T, e: Emitter): Proxy<T> {
   const _state = { ...init, on: e.on };
@@ -51,19 +52,17 @@ function proxy<T extends object>(init: T, e: Emitter): Proxy<T> {
 }
 
 // Function to create store with a data access layer
-export function store<T extends object>(init: T): Store<T> {
+export function store<T extends object>(
+  init: T,
+  commands: Commands<T>
+): Store<T> {
   const _emitter = emitter();
   const _state = proxy<T>(init, _emitter);
-  const _commands: { [key: string]: ICommand<T> } = {};
 
   return new Proxy<Store<T>>({} as Store<T>, {
-    set(_t: object, key: string, command: ICommand<T>): boolean {
-      if (_commands[key] || _state[key]) return true;
-      _commands[key] = command;
-      return true;
-    },
+    set: () => true,
     get(_t: object, key: string) {
-      if (_commands[key]) return (payload) => _commands[key](_state)(payload);
+      if (commands[key]) return (payload) => commands[key](_state)(payload);
       return _state[key];
     },
   });
