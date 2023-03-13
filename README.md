@@ -20,23 +20,17 @@ The proxy store is tiny reactive atomic state management library that can be use
 ```js
 import { store } from 'pubble';
 // declare a store and set the initial values
-const increment = (state) => (amount = 1) => (state.count += amount);
+const increment = (state) => (amount) => (state.count += amount);
 const myStore = store({ count: 0 }, { increment });
 myStore.increment(2); // { count: 2 }
 
-const l = (c) => console.log('Count updated:', c);
-const remove = myStore.on('count', l); // register listener
+const l = (state, key) => console.log(`${key} updated: ${state[key]}`);
+const remove = myStore.subcribe(l); // register listener
 remove(); // remove listener
 
 // Reactive querying
 let double = myStore.count * 2;
-myStore.on('count', (c) => (double = c * 2)); // double = 2
-
-// You can register functions on a wildcard for debugging purposes
-function debugger(key, value) {
-  console.log(`${key}: ${value}`);
-}
-myStore.on('*', debugger);
+myStore.subscribe((s, k) => (double = s[k] * 2)); // double = 2
 ```
 
 ## React hooks example
@@ -44,38 +38,28 @@ myStore.on('*', debugger);
 A generic React Hook implementation that automatically rerenders if the store value changes.
 
 ```jsx
-import { useReducer, useRef, useLayoutEffect } from 'react';
-import { store } from 'pubble';
+import { useLayoutEffect, useReducer } from 'react';
 
-// Define the store
-const increment =
-  (state) =>
-  (amount = 1) =>
-    (state.count += amount);
-const myStore = store({ count: 0 }, { increment });
-
-// Define the hook
-export function useReadStore(key) {
+// For pubble stores
+export function useStore(store, key) {
   const [, rerender] = useReducer((c) => c + 1, 0);
-  const value = useRef();
 
   useLayoutEffect(() => {
-    function updateCachedValue(val) {
-      value.current = val;
-      rerender();
+    function listener(s, k) {
+      if (k === key) rerender();
     }
 
-    const remove = myStore.on(key, updateCachedValue);
+    const remove = store.subscribe(listener);
     return () => remove();
   }, []); //eslint-disable-line
 
-  return value.current;
+  return store[key];
 }
 
 // Apply in a component
 function MyButton() {
   // here a view on the data is being used in the hook
-  const count = useReadStore('count');
+  const count = useReadStore(myStore, 'count');
   return <button onClick={store.increment}>{`value ${count}`}</button>;
 }
 ```

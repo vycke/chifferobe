@@ -3,8 +3,11 @@ import { store } from '../src';
 
 type CountStore = { count: number };
 
-const increment = (number = 1, state) => (state.count += number);
-const update = (number: number, state) => (state.count = number);
+const increment =
+  (state) =>
+  (number = 1) =>
+    (state.count += number);
+const update = (state) => (number: number) => (state.count = number);
 const state = { count: 1 };
 const commands = { increment, update };
 
@@ -42,7 +45,7 @@ describe('reactive store with data access layer', () => {
   test('QUERY - executing callbacks', () => {
     const fn = jest.fn((x) => x);
     const cache = store<CountStore>(state, commands);
-    cache.on('count', fn);
+    cache.subscribe(fn);
     expect(fn.mock.calls.length).toBe(0);
     cache.increment();
     expect(fn.mock.calls.length).toBe(1);
@@ -51,7 +54,10 @@ describe('reactive store with data access layer', () => {
   test('QUERY - function writing to separate variable', () => {
     const cache = store<CountStore>(state, commands);
     let double: number = cache.count * 2;
-    cache.on('count', (v: number) => (double = v * 2));
+    cache.subscribe((state, key) => {
+      if (key !== 'count') return;
+      double = state[key] * 2;
+    });
     expect(double).toBe(2);
     cache.increment();
     expect(double).toBe(4);
@@ -60,7 +66,7 @@ describe('reactive store with data access layer', () => {
   test('QUERY - remove listener', () => {
     const fn = jest.fn((x) => x);
     const cache = store<CountStore>(state, commands);
-    const remove = cache.on('count', fn);
+    const remove = cache.subscribe(fn);
     remove();
     cache.increment();
     expect(fn.mock.calls.length).toBe(0);
@@ -69,7 +75,7 @@ describe('reactive store with data access layer', () => {
   test('QUERY - entire store', () => {
     const fn = jest.fn((x) => x);
     const cache = store<CountStore>(state, commands);
-    cache.on('*', fn);
+    cache.subscribe(fn);
     expect(fn.mock.calls.length).toBe(0);
     cache.increment();
     expect(fn.mock.calls.length).toBe(1);
@@ -79,7 +85,7 @@ describe('reactive store with data access layer', () => {
     const fn = jest.fn((x) => x);
 
     const cache = store<CountStore>(state, commands);
-    cache.on('count', fn);
+    cache.subscribe(fn);
     cache.update(1);
     expect(fn.mock.calls.length).toBe(0);
   });
