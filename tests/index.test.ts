@@ -3,11 +3,8 @@ import { store } from '../src';
 
 type CountStore = { count: number };
 
-const increment =
-  (state) =>
-  (number = 1) =>
-    (state.count += number);
-const update = (state) => (number: number) => (state.count = number);
+const increment = (number = 1, state) => (state.count += number);
+const update = (number: number, state) => (state.count = number);
 const state = { count: 1 };
 const commands = { increment, update };
 

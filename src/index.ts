@@ -8,10 +8,9 @@ export type Proxy<T> = T & {
   on(key: string, listener: Listener): Subscription;
 };
 
-export type Command = (payload?) => unknown;
-export type ICommand<T> = (store: Proxy<T>) => Command;
-export type Store<T> = Proxy<T> & { [key: string]: Command };
-export type Commands<T> = { [key: string]: ICommand<T> };
+export type Command<T> = (store: Proxy<T>, payload?) => unknown;
+export type Store<T> = Proxy<T> & { [key: string]: Command<T> };
+export type Commands<T> = { [key: string]: Command<T> };
 
 // event emitter used internally in the proxy
 function emitter(): Emitter {
@@ -62,7 +61,7 @@ export function store<T extends object>(
   return new Proxy<Store<T>>({} as Store<T>, {
     set: () => true,
     get(_t: object, key: string) {
-      if (commands[key]) return (payload) => commands[key](_state)(payload);
+      if (commands[key]) return (payload) => commands[key](_state, payload);
       return _state[key];
     },
   });
