@@ -30,7 +30,7 @@ remove(); // remove listener
 
 // Reactive querying
 let double = myStore.count * 2;
-myStore.subscribe((s, k) => (double = s[k] * 2)); // double = 2
+myStore.subscribe((state, old) => (double = state.count * 2)); // double = 2
 ```
 
 ## React hooks example
@@ -45,8 +45,8 @@ export function useStore(store, key) {
   const [, rerender] = useReducer((c) => c + 1, 0);
 
   useLayoutEffect(() => {
-    function listener(s, k) {
-      if (k === key) rerender();
+    function listener(state, old) {
+      if (state[key] !== old[key]) rerender();
     }
 
     const remove = store.subscribe(listener);

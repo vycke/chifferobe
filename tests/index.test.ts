@@ -54,9 +54,8 @@ describe('reactive store with data access layer', () => {
   test('QUERY - function writing to separate variable', () => {
     const cache = store<CountStore>(state, commands);
     let double: number = cache.count * 2;
-    cache.subscribe((state, key) => {
-      if (key !== 'count') return;
-      double = state[key] * 2;
+    cache.subscribe((state) => {
+      double = state.count * 2;
     });
     expect(double).toBe(2);
     cache.increment();
@@ -79,15 +78,6 @@ describe('reactive store with data access layer', () => {
     expect(fn.mock.calls.length).toBe(0);
     cache.increment();
     expect(fn.mock.calls.length).toBe(1);
-  });
-
-  test('QUERY - same value performance improvement', () => {
-    const fn = jest.fn((x) => x);
-
-    const cache = store<CountStore>(state, commands);
-    cache.subscribe(fn);
-    cache.update(1);
-    expect(fn.mock.calls.length).toBe(0);
   });
 
   test('DELETE - delete a property (not allowed)', () => {
