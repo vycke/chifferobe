@@ -1,24 +1,23 @@
-# pubble
+# DALer
 
-![](https://github.com/kevtiq/pubble/workflows/test/badge.svg)
-[![Node version](https://img.shields.io/npm/v/pubble.svg?style=flat)](https://www.npmjs.com/package/pubble)
-[![NPM Downloads](https://img.shields.io/npm/dm/pubble.svg?style=flat)](https://www.npmjs.com/package/pubble)
-[![Minified size](https://img.shields.io/bundlephobia/min/pubble@latest?label=minified)](https://www.npmjs.com/package/pubble)
+![](https://github.com/kevtiq/daler/workflows/test/badge.svg)
+[![Node version](https://img.shields.io/npm/v/daler.svg?style=flat)](https://www.npmjs.com/package/daler)
+[![NPM Downloads](https://img.shields.io/npm/dm/daler.svg?style=flat)](https://www.npmjs.com/package/daler)
+[![Minified size](https://img.shields.io/bundlephobia/min/daler@latest?label=minified)](https://www.npmjs.com/package/daler)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-pubble is a light-weight JavaScript library around an command-driven proxy state management library.
+DALer is a light-weight JavaScript library around an command-driven proxy state management library.
 
 ## Store
 
 The proxy store is tiny reactive atomic state management library that can be used in any modern front-end frameworks (e.g. React, Vue, etc.). It is build on several core principles.
 
 - **Command-driven**: commands can be registered to te store, allowing for changes.
-- **Decoupled**: commands can be registered anywhere (e.g. inside a component) and do not have to be registered near where the store is defined.
 - **Immutable**: data can be made immutable and cannot be mutated directly. Changes can be made via commands.
 - **Modular**: can be used as a single global store, or as many decoupled and distributed small stores.
 
 ```js
-import { store } from 'pubble';
+import { store } from 'daler';
 // declare a store and set the initial values
 const increment = (state) => (amount) => (state.count += amount);
 const myStore = store({ count: 0 }, { increment });
@@ -40,7 +39,6 @@ A generic React Hook implementation that automatically rerenders if the store va
 ```jsx
 import { useLayoutEffect, useReducer } from 'react';
 
-// For pubble stores
 export function useStore(store, key) {
   const [, rerender] = useReducer((c) => c + 1, 0);
 

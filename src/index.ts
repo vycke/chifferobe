@@ -1,10 +1,20 @@
 export type Listener = (...args) => void;
-export type Command = (...args) => unknown;
-export type ICommand<T> = (store: T) => Command;
+export type Command<T> = (...args) => T;
+export type ICommand<T> = (store: T) => Command<T>;
 export type Subscription = (cb: Listener) => () => void;
 export type Store<T> = T & { subscribe: Subscription } & {
-  [key: string]: Command;
+  [key: string]: Command<T>;
 };
+
+// deep-freeze for immutability
+function freeze<T extends object>(obj: T): T {
+  Object.keys(obj).forEach((prop: string) => {
+    if (typeof obj[prop] !== 'object') return;
+    obj[prop] = freeze(obj[prop] as object);
+  });
+
+  return new Proxy<T>(obj, { set: () => true });
+}
 
 // Function to create store with a data access layer
 export function store<T extends object>(
@@ -12,23 +22,25 @@ export function store<T extends object>(
   api: { [key: string]: ICommand<T> }
 ): Store<T> {
   const _list: Listener[] = [];
-  const _state = { ...init };
+  let _state = freeze<T>({ ...init });
 
   function subscribe(cb: Listener) {
     _list.push(cb);
     return () => _list.splice(_list.indexOf(cb) >>> 0, 1);
   }
 
+  function execute(cmd: ICommand<T>, ...args) {
+    const _old = JSON.parse(JSON.stringify(_state));
+    const _new = cmd(_old)(...args);
+    _state = freeze<T>(_new);
+    _list.forEach((cb): void => cb(_new, _old));
+  }
+
   return new Proxy<Store<T>>({} as Store<T>, {
     set: () => true,
     get(_t: object, key: string) {
       if (key === 'subscribe') return subscribe;
-      if (api[key])
-        return (...args) => {
-          const _old = { ..._state };
-          api[key](_state)(...args);
-          _list.forEach((cb): void => cb(_state, _old));
-        };
+      if (api[key]) return (...args) => execute(api[key], ...args);
       return _state[key];
     },
   });
