@@ -19,7 +19,7 @@ The proxy store is tiny reactive atomic state management library that can be use
 ```js
 import { store } from 'daler';
 // declare a store and set the initial values
-const increment = (state) => (amount) => (state.count += amount);
+const increment = (state, amount) => (state.count += amount);
 const myStore = store({ count: 0 }, { increment });
 myStore.increment(2); // { count: 2 }
 

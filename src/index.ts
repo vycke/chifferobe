@@ -1,6 +1,6 @@
 export type Listener = (...args) => void;
 export type Command<T> = (...args) => T;
-export type ICommand<T> = (store: T) => Command<T>;
+export type ICommand<T> = (store: T, ...args) => T;
 export type Subscription = (cb: Listener) => () => void;
 export type Store<T> = T & { subscribe: Subscription } & {
   [key: string]: Command<T>;
@@ -31,7 +31,7 @@ export function store<T extends object>(
 
   function execute(cmd: ICommand<T>, ...args) {
     const _old = JSON.parse(JSON.stringify(_state));
-    const _new = cmd(_old)(...args);
+    const _new = cmd(_old, ...args);
     _state = freeze<T>(_new);
     _list.forEach((cb): void => cb(_new, _old));
   }

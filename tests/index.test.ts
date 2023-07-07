@@ -4,13 +4,12 @@ import { store } from '../src';
 type CountStore = { count: number };
 
 const increment =
-  (state) =>
-  (number = 1) => {
+  (state, number = 1) => {
     state.count += number;
     return state;
   };
 
-const update = (state) => (number: number) => {
+const update = (state, number: number) => {
   state.count = number;
   return state;
 };
@@ -102,8 +101,8 @@ test('IMMUTABLE - changing value', () => {
 });
 
 test('IMMUTABLE - nested change', () => {
-  const inc1 = (s) => () => ({ data: { count: s.data.count + 1 } });
-  const inc2 = (s) => () => {
+  const inc1 = (s) => ({ data: { count: s.data.count + 1 } });
+  const inc2 = (s) => {
     s.data.count++;
     return s;
   };
