@@ -58,7 +58,7 @@ test('QUERY - executing callbacks', () => {
 test('QUERY - function writing to separate variable', () => {
   const cache = store<CountStore>(state, commands);
   let double: number = cache.count * 2;
-  cache.subscribe((state) => {
+  cache.subscribe((_key, state) => {
     double = state.count * 2;
   });
   expect(double).toBe(2);
@@ -118,3 +118,15 @@ test('IMMUTABLE - nested change', () => {
   cache.inc2();
   expect(cache.data.count).toBe(3);
 });
+
+test('DEVTOOLS', () => {
+  const cache = store<CountStore>(state, commands);
+  let history: { key: string, store: CountStore }[] = [];
+  const fn = (key, store) => history.push({ key, store });
+  cache.subscribe(fn);
+  expect(history.length).toBe(0);
+  cache.increment();
+  expect(history.length).toBe(1);
+  cache.increment();
+  expect(history.length).toBe(2);
+})

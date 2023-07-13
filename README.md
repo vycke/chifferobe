@@ -23,7 +23,8 @@ const increment = (state, amount) => (state.count += amount);
 const myStore = store({ count: 0 }, { increment });
 myStore.increment(2); // { count: 2 }
 
-const l = (state, key) => console.log(`${key} updated: ${state[key]}`);
+const l = (command, state, old) =>
+  console.log(`${command} executed, new state: ${state[key]}`);
 const remove = myStore.subcribe(l); // register listener
 remove(); // remove listener
 
@@ -43,7 +44,7 @@ export function useStore(store, key) {
   const [, rerender] = useReducer((c) => c + 1, 0);
 
   useLayoutEffect(() => {
-    function listener(state, old) {
+    function listener(_cmd, state, old) {
       if (state[key] !== old[key]) rerender();
     }
 
