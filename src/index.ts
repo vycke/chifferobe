@@ -1,8 +1,8 @@
-export type Listener<T> = (key: string, newStore: T, oldStore: T) => void;
+export type Listener<T> = (newStore: T, oldStore?: T, key?: string) => void;
 export type Command<T> = (...args) => T;
 export type ICommand<T> = (store: T, ...args) => T;
 export type Subscription<T> = (cb: Listener<T>) => () => void;
-export type Store<T> = T & { subscribe: Subscription<T> } & {
+export type Store<T> = T & { listen: Subscription<T> } & {
   [key: string]: Command<T>;
 };
 
@@ -24,7 +24,7 @@ export function store<T extends object>(
   const _list: Listener<T>[] = [];
   let _state = freeze<T>({ ...init });
 
-  function subscribe(cb: Listener<T>) {
+  function listen(cb: Listener<T>) {
     _list.push(cb);
     return () => _list.splice(_list.indexOf(cb) >>> 0, 1);
   }
@@ -34,13 +34,13 @@ export function store<T extends object>(
     const _old = JSON.parse(JSON.stringify(_state));
     const _new = cmd(_old, ...args);
     _state = freeze<T>(_new);
-    _list.forEach((cb): void => cb(key, _new, _old));
+    _list.forEach((cb): void => cb(_new, _old, key));
   }
 
   return new Proxy<Store<T>>({} as Store<T>, {
     set: () => true,
     get(_t: object, key: string) {
-      if (key === 'subscribe') return subscribe;
+      if (key === 'listen') return listen;
       if (api[key]) return (...args) => execute(key, ...args);
       return _state[key];
     },

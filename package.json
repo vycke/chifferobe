@@ -1,6 +1,6 @@
 {
-  "name": "daler",
-  "version": "2.0.0",
+  "name": "chifferobe",
+  "version": "0.1.0",
   "description": "lightweight dependency free event-driven proxy state",
   "main": "dist/index.js",
   "module": "dist/esm/index.js",
@@ -21,7 +21,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kevtiq/daler.git"
+    "url": "git+https://github.com/kevtiq/chifferobe.git"
   },
   "keywords": [
     "pub sub",
@@ -32,9 +32,9 @@
   "author": "Kevin Pennekamp <github@crinkles.dev>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/kevtiq/daler/issues"
+    "url": "https://github.com/kevtiq/chifferobe/issues"
   },
-  "homepage": "https://github.com/kevtiq/daler#readme",
+  "homepage": "https://github.com/kevtiq/chifferobe#readme",
   "devDependencies": {
     "@types/jest": "^27.4.1",
     "@typescript-eslint/eslint-plugin": "^5.8.1",

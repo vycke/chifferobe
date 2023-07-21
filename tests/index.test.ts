@@ -49,7 +49,7 @@ test('IMMUTABLE - default behavior', () => {
 test('QUERY - executing callbacks', () => {
   const fn = jest.fn((x) => x);
   const cache = store<CountStore>(state, commands);
-  cache.subscribe(fn);
+  cache.listen(fn);
   expect(fn.mock.calls.length).toBe(0);
   cache.increment();
   expect(fn.mock.calls.length).toBe(1);
@@ -58,7 +58,7 @@ test('QUERY - executing callbacks', () => {
 test('QUERY - function writing to separate variable', () => {
   const cache = store<CountStore>(state, commands);
   let double: number = cache.count * 2;
-  cache.subscribe((_key, state) => {
+  cache.listen((state) => {
     double = state.count * 2;
   });
   expect(double).toBe(2);
@@ -69,7 +69,7 @@ test('QUERY - function writing to separate variable', () => {
 test('QUERY - remove listener', () => {
   const fn = jest.fn((x) => x);
   const cache = store<CountStore>(state, commands);
-  const remove = cache.subscribe(fn);
+  const remove = cache.listen(fn);
   remove();
   cache.increment();
   expect(fn.mock.calls.length).toBe(0);
@@ -78,7 +78,7 @@ test('QUERY - remove listener', () => {
 test('QUERY - entire store', () => {
   const fn = jest.fn((x) => x);
   const cache = store<CountStore>(state, commands);
-  cache.subscribe(fn);
+  cache.listen(fn);
   expect(fn.mock.calls.length).toBe(0);
   cache.increment();
   expect(fn.mock.calls.length).toBe(1);
@@ -122,8 +122,8 @@ test('IMMUTABLE - nested change', () => {
 test('DEVTOOLS', () => {
   const cache = store<CountStore>(state, commands);
   let history: { key: string, store: CountStore }[] = [];
-  const fn = (key, store) => history.push({ key, store });
-  cache.subscribe(fn);
+  const fn = (store, _old, key) => history.push({ key, store });
+  cache.listen(fn);
   expect(history.length).toBe(0);
   cache.increment();
   expect(history.length).toBe(1);

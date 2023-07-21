@@ -1,12 +1,12 @@
-# DALer
+# Chifferobe
 
-![](https://github.com/kevtiq/daler/workflows/test/badge.svg)
-[![Node version](https://img.shields.io/npm/v/daler.svg?style=flat)](https://www.npmjs.com/package/daler)
-[![NPM Downloads](https://img.shields.io/npm/dm/daler.svg?style=flat)](https://www.npmjs.com/package/daler)
-[![Minified size](https://img.shields.io/bundlephobia/min/daler@latest?label=minified)](https://www.npmjs.com/package/daler)
+![](https://github.com/kevtiq/chifferobe/workflows/test/badge.svg)
+[![Node version](https://img.shields.io/npm/v/chifferobe.svg?style=flat)](https://www.npmjs.com/package/chifferobe)
+[![NPM Downloads](https://img.shields.io/npm/dm/chifferobe.svg?style=flat)](https://www.npmjs.com/package/chifferobe)
+[![Minified size](https://img.shields.io/bundlephobia/min/chifferobe@latest?label=minified)](https://www.npmjs.com/package/chifferobe)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-DALer is a light-weight JavaScript library around an command-driven proxy state management library.
+Chifferobe is a light-weight JavaScript library around an command-driven proxy state management library.
 
 ## Store
 
@@ -17,20 +17,20 @@ The proxy store is tiny reactive atomic state management library that can be use
 - **Modular**: can be used as a single global store, or as many decoupled and distributed small stores.
 
 ```js
-import { store } from 'daler';
+import { store } from 'chifferobe';
 // declare a store and set the initial values
 const increment = (state, amount) => (state.count += amount);
 const myStore = store({ count: 0 }, { increment });
 myStore.increment(2); // { count: 2 }
 
-const l = (command, state, old) =>
+const l = (state, old, command) =>
   console.log(`${command} executed, new state: ${state[key]}`);
-const remove = myStore.subcribe(l); // register listener
+const remove = myStore.listen(l); // register listener
 remove(); // remove listener
 
 // Reactive querying
 let double = myStore.count * 2;
-myStore.subscribe((state, old) => (double = state.count * 2)); // double = 2
+myStore.listen((state) => (double = state.count * 2)); // double = 2
 ```
 
 ## React hooks example
