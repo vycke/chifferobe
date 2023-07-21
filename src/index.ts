@@ -32,7 +32,7 @@ export function store<T extends object>(
   function execute(key: string, ...args) {
     const command = api[key];
     const prevState = JSON.parse(JSON.stringify(state));
-    const nextState = command(prevState, ...args)
+    const nextState = command(Object.assign({}, prevState), ...args)
     // Check to see if there is anything different
     if (Object.is(nextState, prevState)) return;
     state = freeze<T>(nextState);
