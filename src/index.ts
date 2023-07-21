@@ -21,20 +21,22 @@ export function store<T extends object>(
   init: T,
   api: { [key: string]: ICommand<T> }
 ): Store<T> {
-  const _list: Listener<T>[] = [];
-  let _state = freeze<T>({ ...init });
+  const listeners = new Set<Listener<T>>();
+  let state = freeze<T>(Object.assign({}, init));
 
-  function listen(cb: Listener<T>) {
-    _list.push(cb);
-    return () => _list.splice(_list.indexOf(cb) >>> 0, 1);
+  function listen(listener: Listener<T>) {
+    listeners.add(listener);
+    return () => listeners.delete(listener);
   }
 
   function execute(key: string, ...args) {
-    const cmd = api[key];
-    const _old = JSON.parse(JSON.stringify(_state));
-    const _new = cmd(_old, ...args);
-    _state = freeze<T>(_new);
-    _list.forEach((cb): void => cb(_new, _old, key));
+    const command = api[key];
+    const prevState = JSON.parse(JSON.stringify(state));
+    const nextState = command(prevState, ...args)
+    // Check to see if there is anything different
+    if (Object.is(nextState, prevState)) return;
+    state = freeze<T>(nextState);
+    listeners.forEach((cb): void => cb(nextState, prevState, key));
   }
 
   return new Proxy<Store<T>>({} as Store<T>, {
@@ -42,7 +44,7 @@ export function store<T extends object>(
     get(_t: object, key: string) {
       if (key === 'listen') return listen;
       if (api[key]) return (...args) => execute(key, ...args);
-      return _state[key];
+      return state[key];
     },
   });
 }
