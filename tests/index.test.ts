@@ -1,37 +1,35 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import { store } from '../src';
+import { effect, signal } from "../src";
 
 type CountStore = { count: number };
+type ApiConfig = {
+  increment: (state: CountStore, number?: number) => CountStore;
+};
 
-const increment =
-  (state, number = 1) => {
-    state.count += number;
-    return state;
-  };
-
-const update = (state, number: number) => {
-  state.count = number;
+const increment = (state, number = 1) => {
+  state.count += number;
   return state;
 };
-const state = { count: 1 };
-const commands = { increment, update };
 
-test('COMMAND - without payload', () => {
-  const cache = store<CountStore>(state, commands);
+const state = { count: 1 };
+const commands: ApiConfig = { increment };
+
+test("SIGNAL - without payload", () => {
+  const cache = signal<CountStore, ApiConfig>(state, commands);
   expect(cache.count).toBe(1);
   cache.increment();
   expect(cache.count).toBe(2);
 });
 
-test('COMMAND - with payload', () => {
-  const cache = store<CountStore>(state, commands);
+test("SIGNAL - with payload", () => {
+  const cache = signal<CountStore, ApiConfig>(state, commands);
   expect(cache.count).toBe(1);
   cache.increment(2);
   expect(cache.count).toBe(3);
 });
 
-test('COMMAND - deconstruct', () => {
-  const cache = store<CountStore>(state, commands);
+test("SIGNAL - deconstruct", () => {
+  const cache = signal<CountStore, ApiConfig>(state, commands);
   const { increment: _increment, count } = cache;
   expect(cache.count).toBe(1);
   _increment();
@@ -39,60 +37,8 @@ test('COMMAND - deconstruct', () => {
   expect(count).toBe(1);
 });
 
-test('IMMUTABLE - default behavior', () => {
-  const cache = store<CountStore>(state, commands);
-  expect(cache.count).toBe(1);
-  cache.count = 2;
-  expect(cache.count).toBe(1);
-});
-
-test('QUERY - executing callbacks', () => {
-  const fn = jest.fn((x) => x);
-  const cache = store<CountStore>(state, commands);
-  cache.listen(fn);
-  expect(fn.mock.calls.length).toBe(0);
-  cache.increment();
-  expect(fn.mock.calls.length).toBe(1);
-});
-
-test('QUERY - function writing to separate variable', () => {
-  const cache = store<CountStore>(state, commands);
-  let double: number = cache.count * 2;
-  cache.listen((state) => {
-    double = state.count * 2;
-  });
-  expect(double).toBe(2);
-  cache.increment();
-  expect(double).toBe(4);
-});
-
-test('QUERY - remove listener', () => {
-  const fn = jest.fn((x) => x);
-  const cache = store<CountStore>(state, commands);
-  const remove = cache.listen(fn);
-  remove();
-  cache.increment();
-  expect(fn.mock.calls.length).toBe(0);
-});
-
-test('QUERY - entire store', () => {
-  const fn = jest.fn((x) => x);
-  const cache = store<CountStore>(state, commands);
-  cache.listen(fn);
-  expect(fn.mock.calls.length).toBe(0);
-  cache.increment();
-  expect(fn.mock.calls.length).toBe(1);
-});
-
-test('IMMUTABLE - delete a property (not allowed)', () => {
-  const cache = store<{ count?: number }>(state, commands);
-  expect(cache.count).toBe(1);
-  delete cache.count;
-  expect(cache.count).toBe(1);
-});
-
-test('IMMUTABLE - changing value', () => {
-  const cache = store<{ count?: number }>(state, commands);
+test("SIGNAL - default immutable behavior", () => {
+  const cache = signal<CountStore, ApiConfig>(state, commands);
   expect(cache.count).toBe(1);
   cache.count = 2;
   expect(cache.count).toBe(1);
@@ -100,33 +46,61 @@ test('IMMUTABLE - changing value', () => {
   expect(cache.count).toBe(2);
 });
 
-test('IMMUTABLE - nested change', () => {
-  const inc1 = (s) => ({ data: { count: s.data.count + 1 } });
-  const inc2 = (s) => {
-    s.data.count++;
-    return s;
-  };
-  const cache = store<{ data: { count?: number } }>(
-    { data: { count: 1 } },
-    { inc1, inc2 }
-  );
+test("SIGNAL - delete a property (not allowed)", () => {
+  const cache = signal<{ count?: number }, {}>(state, {});
+  expect(cache.count).toBe(1);
+  delete cache.count;
+  expect(cache.count).toBe(1);
+});
+
+test("SIGNAL - nested immutable change", () => {
+  const cache = signal<{ data: CountStore }, {}>({ data: { count: 1 } }, {});
   expect(cache.data.count).toBe(1);
   cache.data.count = 2;
   expect(cache.data.count).toBe(1);
-  cache.inc1();
-  expect(cache.data.count).toBe(2);
-  cache.inc2();
-  expect(cache.data.count).toBe(3);
 });
 
-test('DEVTOOLS', () => {
-  const cache = store<CountStore>(state, commands);
-  let history: { key: string, store: CountStore }[] = [];
-  const fn = (store, _old, key) => history.push({ key, store });
-  cache.listen(fn);
-  expect(history.length).toBe(0);
+test("EFFECT - simple", () => {
+  const cache = signal<CountStore, ApiConfig>(state, commands);
+  let res = 0;
+  expect(res).toBe(0);
+  const dispose = effect(() => (res = cache.count));
+  expect(res).toBe(1);
   cache.increment();
-  expect(history.length).toBe(1);
+  expect(res).toBe(2);
+  dispose();
+});
+
+test("EFFECT - test cleanup", () => {
+  const cache = signal<CountStore, ApiConfig>(state, commands);
+  let res = 0;
+  const dispose = effect(() => (res = cache.count));
+  dispose();
   cache.increment();
-  expect(history.length).toBe(2);
-})
+  expect(res).toBe(1);
+});
+
+test("EFFECT - double dispose", () => {
+  const cache = signal<CountStore, ApiConfig>(state, commands);
+  let res = 0;
+  const dispose = effect(() => (res = cache.count));
+  dispose();
+  dispose(); // see if a second dispose is possible without failure
+  cache.increment();
+  expect(res).toBe(1);
+});
+
+test("EFFECT - double signals + cleanup", () => {
+  const cache1 = signal<CountStore, ApiConfig>(state, commands);
+  const cache2 = signal<CountStore, ApiConfig>(state, commands);
+  let res = 0;
+  const dispose = effect(() => (res = cache1.count + cache2.count));
+  expect(res).toBe(2);
+  cache1.increment();
+  expect(res).toBe(3);
+  cache2.increment();
+  expect(res).toBe(4);
+  dispose();
+  cache2.increment();
+  expect(res).toBe(4);
+});

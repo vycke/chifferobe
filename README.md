@@ -6,31 +6,72 @@
 [![Minified size](https://img.shields.io/bundlephobia/min/chifferobe@latest?label=minified)](https://www.npmjs.com/package/chifferobe)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Chifferobe is a light-weight JavaScript library around an command-driven proxy state management library.
+A proxy based signals library that allows for small but powerful state management. It is build on top of three core principles:
 
-## Store
-
-The proxy store is tiny reactive atomic state management library that can be used in any modern front-end frameworks (e.g. React, Vue, etc.). It is build on several core principles.
-
-- **Command-driven**: commands can be registered to te store, allowing for changes.
+- **Reactive**: like any signals library, _effects_ can be created that are executed once state is changed.
 - **Immutable**: data can be made immutable and cannot be mutated directly. Changes can be made via commands.
-- **Modular**: can be used as a single global store, or as many decoupled and distributed small stores.
+- **Access-layer**: commands can be registered to the store. These are functions that can be invoked to make changes.
+
+## Example
+
+**Simple definition of a store**
 
 ```js
-import { store } from 'chifferobe';
-// declare a store and set the initial values
-const increment = (state, amount) => (state.count += amount);
-const myStore = store({ count: 0 }, { increment });
-myStore.increment(2); // { count: 2 }
+import { signal, effect } from "chifferobe";
+// define a command
+const increment = (state, amount = 1) => (state.count += amount);
+// define the signal
+const myStore = signal({ count: 0 }, { increment });
+// interact with the signal
+console.log(myStore.count); // 0
+myStore.increment(2);
+console.log(myStore.count); // 2
+```
 
-const l = (state, old, command) =>
-  console.log(`${command} executed, new state: ${state[key]}`);
-const remove = myStore.listen(l); // register listener
-remove(); // remove listener
+**Basic effects**
 
-// Reactive querying
-let double = myStore.count * 2;
-myStore.listen((state) => (double = state.count * 2)); // double = 2
+```js
+// Define an effect
+let double = 0;
+const dispose = effect(() => (double = myStore.count * 2));
+console.log(double); // 4
+myStore.increment(2);
+console.log(double); // 8
+// Remove the effect
+dispose();
+```
+
+**Effects based in multiple stores**
+
+```js
+const myStore1 = signal({ count: 0 }, { increment });
+const myStore2 = signal({ count: 4 }, { increment });
+// Define an effect
+let sum = 0;
+const dispose = effect(() => (sum = myStore1.count + myStore2.count));
+console.log(sum); // 4
+myStore.increment(2);
+console.log(double); // 6
+// Remove the effect
+dispose();
+```
+
+## TypeScript example
+
+```ts
+type CountStore = { count: number };
+type CountCommands = {
+  increment: (state: CountStore, number?: number) => CountStore;
+};
+
+const initStore = { count: 0 };
+const commands = {
+  increment(s, n) {
+    return { ...s, count: s.count + n };
+  },
+};
+
+const store = signal<CountStore, CountCommands>(initStore, commands);
 ```
 
 ## React hooks example
@@ -38,27 +79,24 @@ myStore.listen((state) => (double = state.count * 2)); // double = 2
 A generic React Hook implementation that automatically rerenders if the store value changes.
 
 ```jsx
-import { useLayoutEffect, useReducer } from 'react';
+import { effect } from "chifferobe";
+import { useLayoutEffect, useReducer } from "react";
 
 export function useStore(store, key) {
-  const [, rerender] = useReducer((c) => c + 1, 0);
+  const [state, setState] = useState({});
 
   useLayoutEffect(() => {
-    function listener(_cmd, state, old) {
-      if (state[key] !== old[key]) rerender();
-    }
-
-    const remove = store.subscribe(listener);
-    return () => remove();
+    const dispose = effect(() => setState(store[key]));
+    return () => dispose();
   }, []); //eslint-disable-line
 
-  return store[key];
+  return state;
 }
 
 // Apply in a component
 function MyButton() {
   // here a view on the data is being used in the hook
-  const count = useReadStore(myStore, 'count');
+  const count = useReadStore(myStore, "count");
   return <button onClick={store.increment}>{`value ${count}`}</button>;
 }
 ```
