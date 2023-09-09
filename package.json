@@ -2,11 +2,9 @@
   "name": "chifferobe",
   "version": "0.3.0",
   "description": "lightweight dependency free event-driven proxy state",
-  "module": "dist/index.js",
+  "type": "module",
+  "exports": "./dist",
   "types": "dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest watch",
@@ -15,8 +13,7 @@
     "prepublish": "npm run build",
     "prettier": "prettier --ignore-path .gitignore --check \"**/*.+(js|json|ts|tsx)\"",
     "lint": "eslint --ignore-path .gitignore .",
-    "validate": "npm-run-all --parallel prettier lint test build",
-    "format": "npm run lint:fix && npm run prettier:fix"
+    "validate": "npm-run-all --parallel prettier lint test build"
   },
   "repository": {
     "type": "git",
@@ -38,11 +35,11 @@
     "@typescript-eslint/parser": "^5.8.1",
     "esbuild": "^0.19.2",
     "eslint": "^7.26.0",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-prettier": "^3.4.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.0",
     "eslint-plugin-security": "^1.4.0",
     "npm-run-all": "^4.1.5",
-    "prettier": "^2.3.0",
+    "prettier": "^3.0.3",
     "typescript": "^4.5.4",
     "vitest": "^0.34.4"
   },
