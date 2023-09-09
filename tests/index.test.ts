@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-types */
+import { expect, test } from "vitest";
 import { effect, signal } from "../src";
 
 type CountStore = { count: number };
