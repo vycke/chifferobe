@@ -10,12 +10,15 @@
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest watch",
-    "build": "yarn run clean && tsc && esbuild src/index.ts --bundle --minify --outdir=dist",
+    "build": "npm run clean && tsc && esbuild src/index.ts --bundle --minify --outdir=dist",
     "clean": "rm -rf dist tsconfig.tsbuildinfo",
-    "prepublish": "yarn run build",
-    "format": "prettier --ignore-path .gitignore --write \"**/*.+(js|json|ts|tsx)\"",
+    "prepublish": "npm run build",
+    "prettier": "prettier --ignore-path .gitignore --check \"**/*.+(js|json|ts|tsx)\"",
+    "prettier:fix": "prettier --ignore-path .gitignore --write \"**/*.+(js|json|ts|tsx)\"",
     "lint": "eslint --ignore-path .gitignore .",
-    "validate": "npm-run-all --parallel format lint test build"
+    "lint:fix": "eslint --ignore-path .gitignore . --fix",
+    "validate": "npm-run-all --parallel prettier lint test build",
+    "format": "npm run lint:fix && npm run prettier:fix"
   },
   "repository": {
     "type": "git",
