@@ -14,9 +14,7 @@
     "clean": "rm -rf dist tsconfig.tsbuildinfo",
     "prepublish": "npm run build",
     "prettier": "prettier --ignore-path .gitignore --check \"**/*.+(js|json|ts|tsx)\"",
-    "prettier:fix": "prettier --ignore-path .gitignore --write \"**/*.+(js|json|ts|tsx)\"",
     "lint": "eslint --ignore-path .gitignore .",
-    "lint:fix": "eslint --ignore-path .gitignore . --fix",
     "validate": "npm-run-all --parallel prettier lint test build",
     "format": "npm run lint:fix && npm run prettier:fix"
   },
