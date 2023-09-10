@@ -25,7 +25,7 @@ function freeze<T extends object>(obj: T): T {
 // function to create a signal with named commands
 export function signal<T extends object, U extends Commands<T>>(
   init: T,
-  commands: U
+  commands: U,
 ): Signal<T, U> {
   const listeners = new Set<IListener>();
   let state = freeze(init);
