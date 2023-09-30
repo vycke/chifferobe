@@ -1,9 +1,9 @@
 {
   "name": "chifferobe",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "lightweight dependency free event-driven proxy state",
   "type": "module",
-  "exports": "./dist",
+  "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "test": "vitest run",
