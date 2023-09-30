@@ -19,7 +19,10 @@ A proxy based signals library that allows for small but powerful state managemen
 ```js
 import { signal, effect } from "chifferobe";
 // define a command
-const increment = (state, amount = 1) => (state.count += amount);
+const increment =
+  (state) =>
+  (amount = 1) =>
+    (state.count += amount);
 // define the signal
 const myStore = signal({ count: 0 }, { increment });
 // interact with the signal
@@ -61,12 +64,12 @@ dispose();
 ```ts
 type CountStore = { count: number };
 type CountCommands = {
-  increment: (state: CountStore, number?: number) => CountStore;
+  increment: (number?: number) => CountStore;
 };
 
 const initStore = { count: 0 };
 const commands = {
-  increment(s, n) {
+  increment: (state) => (n) => {
     return { ...s, count: s.count + n };
   },
 };

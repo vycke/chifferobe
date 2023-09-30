@@ -4,16 +4,18 @@ import { effect, signal } from "../src";
 
 type CountStore = { count: number };
 type ApiConfig = {
-  increment: (state: CountStore, number?: number) => CountStore;
+  increment: (number?: number) => CountStore;
 };
 
-const increment = (state, number = 1) => {
-  state.count += number;
-  return state;
-};
+const increment =
+  (state) =>
+  (number = 1) => {
+    state.count += number;
+    return state;
+  };
 
 const state = { count: 1 };
-const commands: ApiConfig = { increment };
+const commands = { increment };
 
 test("SIGNAL - without payload", () => {
   const cache = signal<CountStore, ApiConfig>(state, commands);

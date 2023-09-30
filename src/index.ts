@@ -1,10 +1,11 @@
 export type Listener = () => void;
 type IListener = { callback: Listener };
-export type ICommand<T> = (store: T, ...args) => T;
-export type Commands<T> = { [key: string]: ICommand<T> };
-export type Signal<T, U extends Commands<T>> = T & {
-  [key in keyof U]: (...args) => T;
+export type Command<T> = (...args) => T;
+export type Commands<T> = { [key: string]: Command<T> };
+export type ICommands<T, U> = {
+  [key in keyof U]: (state: T) => U[key];
 };
+export type Signal<T extends object, U extends Commands<T>> = T & U;
 
 // helper variables. Due to the synchronous nature of the package,
 // this method works
@@ -25,7 +26,7 @@ function freeze<T extends object>(obj: T): T {
 // function to create a signal with named commands
 export function signal<T extends object, U extends Commands<T>>(
   init: T,
-  commands: U,
+  commands: ICommands<T, Commands<T>>,
 ): Signal<T, U> {
   const listeners = new Set<IListener>();
   let state = freeze(init);
@@ -37,9 +38,9 @@ export function signal<T extends object, U extends Commands<T>>(
     return state[key];
   }
 
-  function write(command: ICommand<T>, ...args) {
+  function write(command: (state: T) => Command<T>, ...args) {
     const prevState = JSON.parse(JSON.stringify(state));
-    const nextState = command(Object.assign({}, prevState), ...args);
+    const nextState = command(Object.assign({}, prevState))(...args);
     state = freeze(nextState);
 
     listeners.forEach((listener): void => {
@@ -52,7 +53,10 @@ export function signal<T extends object, U extends Commands<T>>(
   return new Proxy<Signal<T, U>>({} as Signal<T, U>, {
     set: () => true,
     get(_t: object, key: string) {
-      if (commands[key]) return (...args) => write(commands[key], ...args);
+      if (commands[key]) {
+        const command = commands[key];
+        return (...args) => write(command, ...args);
+      }
       return read(key);
     },
   });
