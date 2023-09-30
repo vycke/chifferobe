@@ -1,6 +1,6 @@
 {
   "name": "chifferobe",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "lightweight dependency free event-driven proxy state",
   "type": "module",
   "module": "dist/index.js",
@@ -9,7 +9,7 @@
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest watch",
-    "build": "npm run clean && tsc && esbuild src/index.ts --bundle --minify --outdir=dist",
+    "build": "npm run clean && tsc && esbuild src/index.ts --outdir=dist",
     "clean": "rm -rf dist tsconfig.tsbuildinfo",
     "prepublish": "npm run build",
     "prettier": "prettier --ignore-path .gitignore --check \"**/*.+(js|json|ts|tsx)\"",
