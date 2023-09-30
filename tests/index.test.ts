@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { expect, test } from "vitest";
-import { effect, signal } from "../src";
+import { effect, Commands, signal } from "../src";
 
 type CountStore = { count: number };
 type ApiConfig = {
@@ -15,7 +15,7 @@ const increment =
   };
 
 const state = { count: 1 };
-const commands = { increment };
+const commands: Commands<CountStore, ApiConfig> = { increment };
 
 test("SIGNAL - without payload", () => {
   const cache = signal<CountStore, ApiConfig>(state, commands);

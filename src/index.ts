@@ -1,11 +1,11 @@
 export type Listener = () => void;
 type IListener = { callback: Listener };
-export type Command<T> = (...args) => T;
-export type Commands<T> = { [key: string]: Command<T> };
-export type ICommands<T, U> = {
+type Command<T> = (state: T) => (...args) => T;
+export type Api<T> = { [key: string]: (...args) => T };
+export type Commands<T, U> = {
   [key in keyof U]: (state: T) => U[key];
 };
-export type Signal<T extends object, U extends Commands<T>> = T & U;
+export type Signal<T extends object, U extends Api<T>> = T & U;
 
 // helper variables. Due to the synchronous nature of the package,
 // this method works
@@ -24,9 +24,9 @@ function freeze<T extends object>(obj: T): T {
 }
 
 // function to create a signal with named commands
-export function signal<T extends object, U extends Commands<T>>(
+export function signal<T extends object, U extends Api<T>>(
   init: T,
-  commands: ICommands<T, Commands<T>>,
+  commands: Commands<T, U>,
 ): Signal<T, U> {
   const listeners = new Set<IListener>();
   let state = freeze(init);
@@ -38,7 +38,7 @@ export function signal<T extends object, U extends Commands<T>>(
     return state[key];
   }
 
-  function write(command: (state: T) => Command<T>, ...args) {
+  function write(command: Command<T>, ...args) {
     const prevState = JSON.parse(JSON.stringify(state));
     const nextState = command(Object.assign({}, prevState))(...args);
     state = freeze(nextState);
