@@ -4,6 +4,7 @@
   "description": "lightweight dependency free event-driven proxy state",
   "type": "module",
   "module": "dist/index.js",
+  "exports": "./dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "test": "vitest run",
