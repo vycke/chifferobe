@@ -1,6 +1,6 @@
 {
   "name": "chifferobe",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "lightweight dependency free event-driven proxy state",
   "type": "module",
   "module": "dist/index.js",

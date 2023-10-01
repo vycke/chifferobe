@@ -13,14 +13,9 @@ let LISTENER: IListener | null = null;
 // a weakmap of
 export const EFFECTS = new Map();
 
-// helper to ensure deep immutability
-function freeze<T extends object>(obj: T): T {
-  Object.keys(obj).forEach((prop: string) => {
-    if (typeof obj[prop] !== "object" || !obj[prop]) return;
-    obj[prop] = freeze(obj[prop] as object);
-  });
-
-  return new Proxy<T>(obj, { set: () => true });
+// copy nested objects
+function copy<T extends object>(obj: T) {
+  return JSON.parse(JSON.stringify(obj));
 }
 
 // function to create a signal with named commands
@@ -29,19 +24,20 @@ export function signal<T extends object, U extends Api<T>>(
   commands: Commands<T, U>,
 ): Signal<T, U> {
   const listeners = new Set<IListener>();
-  let state = freeze(init);
+  let state = copy(init);
 
   // first check if there is a listener ready to be registered
   // next provide back the value from the state
   function read(key: string) {
     if (LISTENER) listeners.add(LISTENER);
+    if (typeof state[key] === "object") return copy(state[key]);
     return state[key];
   }
 
   function write(command: Command<T>, ...args) {
     const prevState = JSON.parse(JSON.stringify(state));
     const nextState = command(Object.assign({}, prevState))(...args);
-    state = freeze(nextState);
+    state = nextState;
 
     listeners.forEach((listener): void => {
       // if the effect still exists, execute the listener otherwise, delete it

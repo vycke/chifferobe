@@ -60,6 +60,7 @@ test("SIGNAL - nested immutable change", () => {
   const cache = signal<{ data: CountStore }, {}>({ data: { count: 1 } }, {});
   expect(cache.data.count).toBe(1);
   cache.data.count = 2;
+  console.log(cache.data);
   expect(cache.data.count).toBe(1);
 });
 
