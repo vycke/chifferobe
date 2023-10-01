@@ -63,6 +63,11 @@ test("SIGNAL - nested immutable change", () => {
   expect(cache.data.count).toBe(1);
 });
 
+test("SIGNAL - nested structure with NULL", () => {
+  const cache = signal<{ data: CountStore | null }, {}>({ data: null }, {});
+  expect(cache.data).toBe(null);
+});
+
 test("EFFECT - simple", () => {
   const cache = signal<CountStore, ApiConfig>(state, commands);
   let res = 0;

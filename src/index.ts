@@ -16,7 +16,7 @@ export const EFFECTS = new Map();
 // helper to ensure deep immutability
 function freeze<T extends object>(obj: T): T {
   Object.keys(obj).forEach((prop: string) => {
-    if (typeof obj[prop] !== "object") return;
+    if (typeof obj[prop] !== "object" || !obj[prop]) return;
     obj[prop] = freeze(obj[prop] as object);
   });
 
