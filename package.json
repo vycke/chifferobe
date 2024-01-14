@@ -18,7 +18,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kevtiq/chifferobe.git"
+    "url": "git+https://github.com/vycke/chifferobe.git"
   },
   "keywords": [
     "store",
@@ -28,9 +28,9 @@
   "author": "Kevin Pennekamp <github@crinkles.dev>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/kevtiq/chifferobe/issues"
+    "url": "https://github.com/vycke/chifferobe/issues"
   },
-  "homepage": "https://github.com/kevtiq/chifferobe#readme",
+  "homepage": "https://github.com/vycke/chifferobe#readme",
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.8.1",
     "@typescript-eslint/parser": "^5.8.1",
