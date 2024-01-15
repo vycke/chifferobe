@@ -1,6 +1,6 @@
 # Chifferobe
 
-![](https://github.com/vycke/chifferobe/workflows/test/badge.svg)
+![](https://github.com/vyckes/chifferobe/workflows/test/badge.svg)
 [![Node version](https://img.shields.io/npm/v/chifferobe.svg?style=flat)](https://www.npmjs.com/package/chifferobe)
 [![NPM Downloads](https://img.shields.io/npm/dm/chifferobe.svg?style=flat)](https://www.npmjs.com/package/chifferobe)
 [![Minified size](https://img.shields.io/bundlephobia/min/chifferobe@latest?label=minified)](https://www.npmjs.com/package/chifferobe)
